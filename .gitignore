@@ -1,0 +1,6 @@
+# Never publish: the manuscript, spoiler-heavy research notes and the private setup checklist.
+research/
+SETUP.md
+.DS_Store
+# The clip videos are hosted on YouTube, never in this repo (local copies only).
+assets/clips/*.mp4
