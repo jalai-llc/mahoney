@@ -99,7 +99,11 @@
       <p>Three readings from the book, and five conversations about it.</p>
     </div>
 
-    <div class="wrap-wide clip-grid">
+    <div class="wrap-wide clip-carousel">
+      <button class="carousel-btn carousel-prev" type="button" aria-label="Previous videos" data-scroll="-1" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="clip-track" tabindex="0" role="region" aria-label="Videos: scroll sideways for more">
       <figure class="clip" data-clip="dads-phone-call">
         <div class="clip-media">
           <img class="clip-poster" src="assets/clips/dads-phone-call.jpg" alt="" width="720" height="1280" loading="lazy">
@@ -204,6 +208,10 @@
           <h3 class="clip-title">The never-ending book journey</h3>
         </figcaption>
       </figure>
+      </div>
+      <button class="carousel-btn carousel-next" type="button" aria-label="Next videos" data-scroll="1" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </section>
 

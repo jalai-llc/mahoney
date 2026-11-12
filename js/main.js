@@ -111,4 +111,34 @@
     if (section) section.hidden = true;
     document.querySelectorAll('[data-clips-link]').forEach(function (a) { a.hidden = true; });
   }
+
+  // ---- carousel arrows: scroll one screenful of cards; each arrow fades out at its end.
+  // Without JS the row still scrolls by swipe or trackpad; the arrows stay hidden.
+  document.querySelectorAll('.clip-carousel').forEach(function (box) {
+    var track = box.querySelector('.clip-track');
+    var prev = box.querySelector('.carousel-prev');
+    var next = box.querySelector('.carousel-next');
+    if (!track || !prev || !next) return;
+
+    function pageWidth() {
+      var card = track.querySelector('.clip:not([hidden])');
+      if (!card) return track.clientWidth;
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      var step = card.getBoundingClientRect().width + gap;
+      return Math.max(1, Math.floor((track.clientWidth + gap) / step)) * step;
+    }
+    function update() {
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
+    }
+    [prev, next].forEach(function (btn) {
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        track.scrollBy({ left: Number(btn.getAttribute('data-scroll')) * pageWidth() });
+      });
+    });
+    track.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    update();
+  });
 })();

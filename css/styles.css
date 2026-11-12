@@ -136,8 +136,36 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
 .clips { background: var(--bg); }
-.clip-grid { display: grid; gap: 32px 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-@media (min-width: 900px) { .clip-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 24px; } }
+/* Carousel: a sideways-scrolling row (swipe, trackpad, or the arrows). Shows 1.7 cards on
+   phones, 2.6 on tablets, 4 on desktop; the partly visible card hints that there's more. */
+.clip-carousel { position: relative; }
+.clip-track { display: flex; gap: 18px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory;
+  scroll-behavior: smooth; scrollbar-width: none; padding: 4px 0 28px; }
+.clip-track::-webkit-scrollbar { display: none; }
+.clip-track:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 14px; }
+.clip-track > .clip { flex: 0 0 calc((100% - 18px) / 1.7); scroll-snap-align: start; }
+@media (min-width: 600px) { .clip-track > .clip { flex-basis: calc((100% - 2 * 18px) / 2.6); } }
+@media (min-width: 900px) { .clip-track { gap: 24px; } .clip-track > .clip { flex-basis: calc((100% - 3 * 24px) / 4); } }
+@media (prefers-reduced-motion: reduce) { .clip-track { scroll-behavior: auto; } }
+.carousel-btn { position: absolute; z-index: 2; top: 0; bottom: 110px; margin: auto 0; width: 48px; height: 48px;
+  border-radius: 50%; border: 1px solid var(--rule); background: #fff; color: var(--ink); padding: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(14, 31, 59, .2);
+  transition: opacity .2s var(--ease), transform .2s var(--ease); }
+.carousel-btn svg { width: 22px; height: 22px; }
+.carousel-btn:hover { transform: scale(1.06); }
+.carousel-btn:disabled { opacity: 0; pointer-events: none; }
+.carousel-prev { left: 8px; }
+.carousel-next { right: 8px; }
+@media (min-width: 1240px) { .carousel-prev { left: -36px; } .carousel-next { right: -36px; } }
+/* Below desktop the row runs to the screen edges and the arrows sit as a pair under it. */
+@media (max-width: 899px) {
+  .clip-track { margin: 0 -24px; padding-left: 24px; padding-right: 24px; scroll-padding: 0 24px; }
+  .clip-carousel { padding-bottom: 56px; }
+  .carousel-btn { top: auto; bottom: 0; margin: 0; width: 44px; height: 44px; }
+  .carousel-btn:disabled { opacity: .35; }
+  .carousel-prev { left: calc(50% - 52px); }
+  .carousel-next { right: calc(50% - 52px); }
+}
 .clip { margin: 0; display: flex; flex-direction: column; gap: 14px; }
 .clip-media { position: relative; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden;
   background: var(--ink); box-shadow: 0 24px 50px -24px rgba(14, 31, 59, .4); }
