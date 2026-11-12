@@ -39,10 +39,12 @@
     });
   });
 
-  // ---- clips: poster + play button; clicking swaps in the YouTube player.
-  // The video files live on YouTube, not on this site. A card with no YouTube
-  // link in config.js is hidden; with none at all, the Clips section is too.
+  // ---- clips: poster + play button; clicking swaps in a player.
+  // A clip with a YouTube link in config.js plays from YouTube. Otherwise it plays
+  // the file from this site (clipFolder/<name>.mp4). With clipFolder set to "",
+  // clips without a YouTube link are hidden, and with none, so is the section.
   var links = cfg.youtube || {};
+  var folder = cfg.clipFolder || '';
   var current = null;   // the card whose player is open
 
   function youtubeId(value) {
@@ -53,29 +55,54 @@
   }
 
   function closePlayer(clip) {
-    var frame = clip.querySelector('iframe');
-    if (frame) frame.remove();
+    var player = clip.querySelector('iframe, video');
+    if (player) player.remove();
     clip.classList.remove('playing');
+  }
+
+  function youtubePlayer(id, title) {
+    var frame = document.createElement('iframe');
+    frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0';
+    frame.title = title;
+    frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    frame.allowFullscreen = true;
+    frame.referrerPolicy = 'strict-origin-when-cross-origin';   // YouTube refuses embeds without a referrer
+    return frame;
+  }
+
+  function filePlayer(src, title, clip) {
+    var video = document.createElement('video');
+    video.src = src;
+    video.controls = true;
+    video.playsInline = true;
+    video.setAttribute('aria-label', title);
+    video.addEventListener('ended', function () {
+      closePlayer(clip);
+      if (current === clip) current = null;
+      clip.querySelector('.clip-play').focus();
+    });
+    return video;
   }
 
   var shown = 0;
   document.querySelectorAll('.clip[data-clip]').forEach(function (clip) {
-    var id = youtubeId(links[clip.getAttribute('data-clip')]);
+    var name = clip.getAttribute('data-clip');
+    var id = youtubeId(links[name]);
     var btn = clip.querySelector('.clip-play');
-    if (!id || !btn) { clip.hidden = true; return; }
+    if (!btn || (!id && !folder)) { clip.hidden = true; return; }
     shown++;
     btn.addEventListener('click', function () {
       if (current && current !== clip) closePlayer(current);   // one clip at a time
-      var frame = document.createElement('iframe');
-      frame.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&playsinline=1&rel=0';
-      frame.title = clip.querySelector('.clip-title').textContent;
-      frame.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-      frame.allowFullscreen = true;
-      frame.referrerPolicy = 'strict-origin-when-cross-origin';   // YouTube refuses embeds without a referrer
-      clip.querySelector('.clip-media').appendChild(frame);
+      var title = clip.querySelector('.clip-title').textContent;
+      var player = id ? youtubePlayer(id, title) : filePlayer(folder + name + '.mp4', title, clip);
+      clip.querySelector('.clip-media').appendChild(player);
       clip.classList.add('playing');
       current = clip;
-      frame.focus();
+      if (player.play) {   // a file: start it inside the click, so sound is allowed
+        var started = player.play();
+        if (started && started.catch) started.catch(function () {});
+      }
+      player.focus();
     });
   });
 

@@ -18,8 +18,13 @@ window.SITE_CONFIG = {
     extraFields: { "fields[source]": "website" },
   },
 
+  // Where the clip videos live on this site. A clip with no YouTube link below
+  // plays <clipFolder><name>.mp4. Set to "" once every clip is on YouTube
+  // (then a clip with no link is hidden, and with none, the whole section).
+  clipFolder: "assets/clips/",
+
   // YouTube links for the 8 clips (paste the full link or just the ID).
-  // A clip with no link is hidden; with none, the whole Clips section is hidden.
+  // A clip with a link plays from YouTube instead of the file above.
   youtube: {
     "dads-phone-call": "",      // Drive: Dad's_shocking phone call.mp4
     "ferry-panic": "",          // Drive: Panic_attack on ferry after tsunami.mp4

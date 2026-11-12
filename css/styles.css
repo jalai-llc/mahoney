@@ -127,14 +127,21 @@ img { max-width: 100%; display: block; }
 .section-head h2 { font-size: clamp(30px, 4.4vw, 48px); }
 .section-head p { font-size: 18px; color: var(--muted); margin: 0; }
 
+/* ---------- The book (description) ---------- */
+.book-desc { background: var(--bg); padding-top: 56px; }
+.book-desc-inner { max-width: 720px; margin: 0 auto; padding: 0 24px; text-align: center; }
+.book-desc h2 { font-size: clamp(30px, 4.4vw, 48px); }
+.book-desc-text { margin: 8px 0 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.7; color: var(--ink); }
+.book-desc-text cite { font-style: italic; }
+
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
-.clips { background: var(--bg); padding-top: 40px; }
+.clips { background: var(--bg); }
 .clip-grid { display: grid; gap: 32px 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (min-width: 900px) { .clip-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 44px 24px; } }
 .clip { margin: 0; display: flex; flex-direction: column; gap: 14px; }
 .clip-media { position: relative; aspect-ratio: 9 / 16; border-radius: 14px; overflow: hidden;
   background: var(--ink); box-shadow: 0 24px 50px -24px rgba(14, 31, 59, .4); }
-.clip-poster, .clip-media iframe { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+.clip-poster, .clip-media iframe, .clip-media video { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
   object-fit: cover; border: 0; background: var(--ink); }
 .clip-play { position: absolute; inset: 0; width: 100%; border: 0; padding: 0; cursor: pointer; color: inherit;
   background: linear-gradient(180deg, rgba(14, 31, 59, 0) 55%, rgba(14, 31, 59, .55) 100%); }
