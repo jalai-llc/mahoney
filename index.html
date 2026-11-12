@@ -21,22 +21,33 @@
 </head>
 <body>
 
-<nav class="site-nav" aria-label="Site sections">
+<!-- Top bar: stays on screen. Whenever the waitlist form below is off screen, the bar carries its own
+     waitlist field (inline on wide screens; the button opens it under the bar on narrow ones). -->
+<header class="site-nav">
   <div class="site-nav-inner">
-    <a href="#top" class="site-nav-brand">Terry Mahoney</a>
-    <ul class="site-nav-links">
-      <li><a href="#the-book">The book</a></li>
-      <li data-clips-link><a href="#clips">Videos</a></li>
-      <li><a href="#about">About</a></li>
-      <li><a href="#book">Book Terry</a></li>
-    </ul>
-    <a href="#top" class="site-nav-cta" data-focus-signup>Join the waitlist</a>
+    <a href="#top" class="site-nav-brand">Wave After Wave</a>
+    <nav class="site-nav-links" aria-label="Site sections">
+      <ul>
+        <li><a href="#the-book">The book</a></li>
+        <li data-clips-link><a href="#clips">My voice</a></li>
+        <li><a href="#about">About me</a></li>
+        <li><a href="#book">Book me</a></li>
+      </ul>
+    </nav>
+    <a href="#waitlist" class="site-nav-cta" data-waitlist-toggle aria-controls="bar-signup" aria-expanded="false">Join the waitlist</a>
+    <div class="bar-signup" id="bar-signup">
+      <form class="email-form light bar-form" data-signup data-source="website-bar">
+        <label class="sr-only" for="bar-signup-email">Email address</label>
+        <input id="bar-signup-email" type="email" name="email_address" required autocomplete="email" placeholder="your@email.com">
+        <button class="btn" type="submit">Join the waitlist</button>
+      </form>
+    </div>
   </div>
-</nav>
+</header>
 
 <main>
   <!-- =================== HERO + SIGN-UP =================== -->
-  <section class="hero" id="top">
+  <section class="hero" id="the-book">
     <div class="wave-layers" aria-hidden="true">
       <div class="wave-layer wave-l1">
         <svg viewBox="0 0 1440 220" preserveAspectRatio="none"><path d="M0,110 C240,70 480,150 720,110 C960,70 1200,150 1440,110 L1440,220 L0,220 Z"/></svg>
@@ -56,34 +67,7 @@
       <p class="eyebrow hero-stagger" style="--stagger:1">A memoir</p>
       <h1 class="hero-stagger" style="--stagger:2">Wave After Wave<span class="subtitle">Messages That Take a Lifetime to Hear</span></h1>
       <p class="byline hero-stagger" style="--stagger:3">Terry Mahoney</p>
-      <p class="hook hero-stagger" style="--stagger:4">
-        &ldquo;I was fifty feet underwater, on my first scuba dive, when the ocean changed above me.
-        I surfaced into a different world. More than two hundred thousand people did not.
-        The tsunami wasn&rsquo;t the hardest part. What followed was.&rdquo;
-      </p>
-      <div class="cta-block hero-stagger" style="--stagger:5">
-        <p class="cta-headline">Want to know when the book is out?</p>
-        <p class="cta-copy">Many people have told me they want to know where they can buy the book when it
-          becomes available. If you would like to keep abreast of the progress I am making to get this book
-          published and into the public&rsquo;s hands, add your email to my list. It won&rsquo;t be shared with
-          anyone and I&rsquo;ll only send you an email when there is news to share.</p>
-        <form class="email-form" data-signup data-msg="signup-msg">
-          <label class="sr-only" for="signup-email">Email address</label>
-          <input id="signup-email" type="email" name="email_address" required autocomplete="email" placeholder="your@email.com">
-          <button class="btn" type="submit">Join the waitlist</button>
-        </form>
-        <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
-        <a href="#clips" class="secondary-link" data-clips-link>or hear Terry talk about it &darr;</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- =================== THE BOOK =================== -->
-  <section class="section book-desc" id="the-book" aria-labelledby="the-book-title">
-    <div class="book-desc-inner">
-      <p class="eyebrow">The book</p>
-      <h2 id="the-book-title">About the book</h2>
-      <p class="book-desc-text">
+      <p class="hero-desc hero-stagger" style="--stagger:4">
         <cite>Wave After Wave: Messages That Take a Lifetime to Hear</cite> is a sometimes hilarious,
         sometimes heartbreaking journey sparked by one lifelong question: How do I get my father to say,
         &ldquo;I love you&rdquo; or &ldquo;I&rsquo;m proud of you&rdquo;? The search takes me through unexpected
@@ -91,6 +75,24 @@
         challenge everything I thought I knew. Told through interconnected vignettes, it explores
         life&rsquo;s waves of change and trauma&mdash;and how we find our footing when they never fully recede.
       </p>
+    </div>
+  </section>
+
+  <!-- =================== WAITLIST (follows the book) =================== -->
+  <section class="section waitlist" id="waitlist" aria-labelledby="waitlist-title">
+    <div class="waitlist-inner">
+      <h2 id="waitlist-title">Want to know when the book is out?</h2>
+      <p class="waitlist-copy">Many people have told me they want to know where they can buy the book when it
+        becomes available. If you would like to keep abreast of the progress I am making to get this book
+        published and into the public&rsquo;s hands, add your email to my list. It won&rsquo;t be shared with
+        anyone and I&rsquo;ll only send you an email when there is news to share.</p>
+      <form class="email-form light" data-signup data-msg="signup-msg">
+        <label class="sr-only" for="signup-email">Email address</label>
+        <input id="signup-email" type="email" name="email_address" required autocomplete="email" placeholder="your@email.com">
+        <button class="btn" type="submit">Join the waitlist</button>
+      </form>
+      <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
+      <a href="#clips" class="secondary-link" data-clips-link>or hear Terry talk about it &darr;</a>
     </div>
   </section>
 

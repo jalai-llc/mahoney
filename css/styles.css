@@ -44,18 +44,48 @@ img { max-width: 100%; display: block; }
 }
 .site-nav-inner { max-width: var(--max-wide); margin: 0 auto; padding: 14px 24px;
   display: flex; align-items: center; gap: 24px; }
-.site-nav-brand { font-family: var(--font-display); font-weight: 600; font-size: 17px; letter-spacing: -.01em;
+.site-nav-brand { font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 18px; letter-spacing: -.01em;
   color: var(--ink); border: 0; white-space: nowrap; }
-.site-nav-links { list-style: none; padding: 0; margin: 0; display: flex; gap: 22px; flex: 1; justify-content: center; }
-.site-nav-links a { color: var(--muted); font-size: 13px; font-weight: 500; border: 0; letter-spacing: .01em; transition: color .15s; }
+.site-nav-links { flex: 1; }
+.site-nav-links ul { list-style: none; padding: 0; margin: 0; display: flex; gap: 22px; justify-content: center; }
+.site-nav-links a { color: var(--muted); font-size: 13px; font-weight: 500; border: 0; letter-spacing: .01em; white-space: nowrap; transition: color .15s; }
 .site-nav-links a:hover { color: var(--ink); }
-.site-nav-cta { font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px;
-  background: var(--ink); color: var(--bg); border: 0; white-space: nowrap; }
+/* The button and the bar's email field share one height, so the bar never jumps when they swap. */
+.site-nav-cta { display: inline-flex; align-items: center; height: 38px; padding: 0 16px; border-radius: 999px;
+  font-size: 13px; font-weight: 600; background: var(--ink); color: var(--bg); border: 0; white-space: nowrap; }
 .site-nav-cta:hover { opacity: .88; }
+/* Phones: the title and the button on one row, the four links on a row under them. */
 @media (max-width: 720px) {
-  .site-nav-links { display: none; }
-  .site-nav-inner { justify-content: space-between; }
+  html { scroll-padding-top: 104px; }
+  .site-nav-inner { flex-wrap: wrap; justify-content: space-between; gap: 8px 12px; padding: 10px 16px 9px; }
+  .site-nav-cta { padding: 0 14px; }
+  .site-nav-links { order: 3; flex-basis: 100%; }
+  .site-nav-links ul { gap: clamp(14px, 5vw, 24px); }
 }
+
+/* The bar's own waitlist field (an .email-form.light). Hidden while the waitlist section's form is
+   on screen; main.js adds .form-away whenever that form is off screen. Wide screens show the field
+   in place of the button; narrow ones keep the button, which opens the field in a strip under the
+   bar (.signup-open). */
+.bar-signup { display: none; }
+.site-nav .bar-form { width: 320px; height: 38px; padding: 3px 3px 3px 14px; }
+.site-nav .bar-form input { font-size: 14px; }
+.site-nav .bar-form .btn { font-size: 13px; line-height: 1; padding: 0 14px; }
+.site-nav .bar-form .btn:hover { transform: none; opacity: .88; }
+@media (min-width: 900px) {
+  .site-nav.form-away .site-nav-cta { display: none; }
+  .site-nav.form-away .bar-signup { display: block; animation: bar-in .25s var(--ease); }
+}
+@media (max-width: 899px) {
+  .site-nav.signup-open .bar-signup { display: block; position: absolute; top: 100%; left: 0; right: 0;
+    padding: 10px 16px 12px; background: rgba(244, 248, 249, .97); border-bottom: 1px solid var(--rule);
+    box-shadow: 0 12px 24px -16px rgba(14, 31, 59, .35); animation: bar-in .2s var(--ease); }
+  .site-nav.signup-open .bar-form { width: min(440px, 100%); height: 46px; margin: 0 auto; }
+  .site-nav.signup-open .bar-form input { font-size: 16px; }   /* 16px+ stops iPhones zooming in on tap */
+  .site-nav.signup-open .bar-form .btn { font-size: 14px; }
+  .site-nav.signup-open .site-nav-cta { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule); }
+}
+@keyframes bar-in { from { opacity: 0; transform: translateY(-4px); } }
 
 /* ---------- Hero ---------- */
 .hero {
@@ -72,12 +102,9 @@ img { max-width: 100%; display: block; }
 .hero h1 .subtitle { display: block; margin-top: 14px; font-family: var(--font-body); font-size: clamp(18px, 2.2vw, 26px);
   font-style: normal; font-weight: 400; letter-spacing: 0; line-height: 1.3; color: rgba(244, 248, 249, .82); }
 .hero .byline { font-family: var(--font-ui); font-size: 14px; letter-spacing: .1em; text-transform: uppercase; margin: 0 0 44px; }
-.hook { font-size: clamp(18px, 2.3vw, 22px); line-height: 1.5; color: rgba(244, 248, 249, .92); max-width: 52ch; margin: 0 auto; }
-.cta-block { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
-.cta-headline { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 2.4vw, 26px); letter-spacing: -.01em; color: var(--bg); }
-.cta-copy { max-width: 600px; margin: 0 0 8px; font-size: 16px; line-height: 1.6; color: rgba(244, 248, 249, .8); }
-.secondary-link { font-family: var(--font-ui); font-size: 13px; letter-spacing: .02em; color: rgba(244, 248, 249, .7); border: 0; }
-.secondary-link:hover { color: var(--bg); }
+/* the book description, right under the title */
+.hero-desc { max-width: 640px; margin: 0 auto; font-size: clamp(18px, 2vw, 21px); line-height: 1.7; color: rgba(244, 248, 249, .9); }
+.hero-desc cite { font-style: italic; }
 
 .email-form {
   display: flex; gap: 8px; padding: 4px 4px 4px 18px; border-radius: 999px;
@@ -89,7 +116,12 @@ img { max-width: 100%; display: block; }
 .email-form input { flex: 1; min-width: 0; border: 0; background: transparent; outline: none;
   color: var(--bg); font: inherit; font-size: 15px; }
 .email-form input::placeholder { color: rgba(244, 248, 249, .55); }
-.signup-msg { min-height: 1.4em; margin: 0; font-family: var(--font-ui); font-size: 14px; color: rgba(244, 248, 249, .85); }
+/* .light: the same form for light backgrounds (the waitlist section and the top bar) */
+.email-form.light { background: var(--white); border: 1px solid #b9c7d2; backdrop-filter: none; -webkit-backdrop-filter: none; }
+.email-form.light:focus-within { border-color: var(--accent); }
+.email-form.light input { color: var(--ink); }
+.email-form.light input::placeholder { color: var(--muted); }
+.email-form.light .btn { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
 .btn { font-family: var(--font-ui); font-size: 14px; font-weight: 600; letter-spacing: .02em;
   padding: 10px 18px; border-radius: 999px; background: var(--bg); color: var(--ink);
@@ -119,6 +151,7 @@ img { max-width: 100%; display: block; }
   html { scroll-behavior: auto; }
   .wave-l1, .wave-l2, .wave-l3 { animation: none; }
   .hero-stagger { opacity: 1; transform: none; animation: none; }
+  .site-nav .bar-signup { animation: none !important; }
 }
 
 /* ---------- Section heads ---------- */
@@ -127,12 +160,17 @@ img { max-width: 100%; display: block; }
 .section-head h2 { font-size: clamp(30px, 4.4vw, 48px); }
 .section-head p { font-size: 18px; color: var(--muted); margin: 0; }
 
-/* ---------- The book (description) ---------- */
-.book-desc { background: var(--bg); padding-top: 56px; }
-.book-desc-inner { max-width: 720px; margin: 0 auto; padding: 0 24px; text-align: center; }
-.book-desc h2 { font-size: clamp(30px, 4.4vw, 48px); }
-.book-desc-text { margin: 8px 0 0; font-size: clamp(18px, 2vw, 21px); line-height: 1.7; color: var(--ink); }
-.book-desc-text cite { font-style: italic; }
+/* ---------- Waitlist (Terry's note + the sign-up form, right after the book) ---------- */
+.waitlist { background: var(--bg); padding-top: 48px; }
+.waitlist-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; }
+.waitlist h2 { font-size: clamp(28px, 4vw, 42px); text-wrap: balance; }
+.waitlist-copy { margin: 4px 0 28px; font-size: clamp(17px, 1.9vw, 19px); line-height: 1.7; color: var(--ink); }
+.waitlist .email-form { width: min(460px, 100%); }
+.waitlist .email-form input { font-size: 16px; }   /* 16px+ stops iPhones zooming in on tap */
+.signup-msg { min-height: 1.4em; margin: 12px 0 0; font-family: var(--font-ui); font-size: 14px; color: var(--muted); }
+.secondary-link { margin-top: 4px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .02em; color: var(--muted); border: 0; }
+.secondary-link:hover { color: var(--ink); }
 
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
 .clips { background: var(--bg); }

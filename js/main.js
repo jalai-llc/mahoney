@@ -1,4 +1,4 @@
-// Shared behaviour: email sign-up and the clip players.
+// Shared behaviour: email sign-up, the top bar's waitlist field, and the clip players.
 (function () {
   var cfg = window.SITE_CONFIG || {};
 
@@ -14,11 +14,12 @@
       form.method = 'post';
       if (input && signup.fieldName) input.name = signup.fieldName;
       var extra = signup.extraFields || {};
+      var source = form.getAttribute('data-source');   // which form it came from, e.g. the top bar
       Object.keys(extra).forEach(function (name) {
         var hidden = document.createElement('input');
         hidden.type = 'hidden';
         hidden.name = name;
-        hidden.value = extra[name];
+        hidden.value = (name === 'fields[source]' && source) ? source : extra[name];
         form.appendChild(hidden);
       });
       return;
@@ -31,13 +32,54 @@
     });
   });
 
-  // "Join the waitlist" in the nav jumps to the form and focuses the field.
-  document.querySelectorAll('[data-focus-signup]').forEach(function (a) {
-    a.addEventListener('click', function () {
-      var field = document.getElementById('signup-email');
-      if (field) setTimeout(function () { field.focus({ preventScroll: true }); }, 350);
+  // ---- the top bar's "Join the waitlist".
+  // While the waitlist section's form is on screen, the button just puts the cursor in it.
+  // Whenever that form is off screen (above or below), the bar gets .form-away: wide screens
+  // then show the bar's own email field (css/styles.css), and on narrow ones the button opens
+  // that field under the bar.
+  var bar = document.querySelector('.site-nav');
+  var toggle = document.querySelector('[data-waitlist-toggle]');
+  var barField = document.getElementById('bar-signup-email');
+  var mainForm = document.querySelector('#waitlist form[data-signup]');
+  var mainField = document.getElementById('signup-email');
+
+  var toggleLabel = toggle ? toggle.textContent : '';
+  function setOpen(open) {
+    if (!bar || !toggle) return;
+    bar.classList.toggle('signup-open', open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.textContent = open ? 'Close' : toggleLabel;   // the strip below has its own "Join" button
+  }
+
+  if (bar && toggle && mainForm && mainField) {
+    if ('IntersectionObserver' in window) {
+      // The top 90px are under the bar, so a form hidden there counts as off screen.
+      new IntersectionObserver(function (entries) {
+        var away = !entries[entries.length - 1].isIntersecting;
+        bar.classList.toggle('form-away', away);
+        if (!away) setOpen(false);
+      }, { rootMargin: '-90px 0px 0px 0px' }).observe(mainForm);
+    }
+
+    toggle.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (!bar.classList.contains('form-away')) {
+        mainField.focus();   // scrolls to it if it's partly off screen
+        return;
+      }
+      var open = !bar.classList.contains('signup-open');
+      setOpen(open);
+      if (open && barField) barField.focus();
     });
-  });
+
+    // Close the strip with Escape, or when a section link is used.
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && bar.classList.contains('signup-open')) { setOpen(false); toggle.focus(); }
+    });
+    bar.querySelectorAll('.site-nav-links a, .site-nav-brand').forEach(function (a) {
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+  }
 
   // ---- clips: poster + play button; clicking swaps in a player.
   // A clip with a YouTube link in config.js plays from YouTube. Otherwise it plays
