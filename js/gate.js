@@ -1,10 +1,11 @@
-// TEMPORARY password gate. It covers the page until the password is entered, then
-// remembers this browser. GitHub Pages can't password-protect for real: the page source
+// TEMPORARY password gate. It covers the page until the password is entered. The unlock
+// lasts only while the tab is open (reloads included); a new tab or visit asks again.
+// GitHub Pages can't password-protect for real: the page source
 // (and the public repo) still holds everything, so this only keeps casual visitors out.
 //
 // Change the password: put the SHA-256 of the new one (in lowercase) in HASH:
 //   printf '%s' newpassword | shasum -a 256
-// Everyone who already got in will be asked again.
+// Anyone with the site open will be asked again on their next reload.
 //
 // Take the gate down: delete this file, the three "password gate" lines (comment, robots
 // meta, script tag) at the end of the <head> in index.html, and the "Password gate" block
@@ -14,7 +15,8 @@
   var KEY = 'site-gate';
   var root = document.documentElement;
 
-  try { if (localStorage.getItem(KEY) === HASH) return; } catch (e) {}
+  try { localStorage.removeItem(KEY); } catch (e) {}   // forget the old remember-this-browser unlock
+  try { if (sessionStorage.getItem(KEY) === HASH) return; } catch (e) {}
   root.classList.add('gated');   // css/styles.css hides the page while this is set
 
   function sha256(text) {
@@ -64,7 +66,7 @@
           input.select();
           return;
         }
-        try { localStorage.setItem(KEY, HASH); } catch (err) {}
+        try { sessionStorage.setItem(KEY, HASH); } catch (err) {}
         gate.remove();
         root.classList.remove('gated');
         window.dispatchEvent(new Event('resize'));   // the video carousel re-measures its arrows
