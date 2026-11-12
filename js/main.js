@@ -31,7 +31,7 @@
     });
   });
 
-  // "Get the chapter" in the nav jumps to the form and focuses the field.
+  // "Join the waitlist" in the nav jumps to the form and focuses the field.
   document.querySelectorAll('[data-focus-signup]').forEach(function (a) {
     a.addEventListener('click', function () {
       var field = document.getElementById('signup-email');

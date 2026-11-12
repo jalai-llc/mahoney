@@ -10,7 +10,7 @@ window.SITE_CONFIG = {
     greet: "greet",
   },
 
-  // Email sign-up ("Get the first chapter") — Kit form "Website signup".
+  // Email sign-up ("Join the waitlist") — Kit form "Website signup".
   // Kit shows its own confirmation page after submit. Set `action` to "" to disable.
   emailSignup: {
     action: "https://app.kit.com/forms/10138863/subscriptions",
