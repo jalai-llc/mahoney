@@ -1,4 +1,4 @@
-// Shared behaviour: email sign-up, the top bar's waitlist field, and the clip players.
+// Shared behaviour: email sign-up, the top bar's waitlist field, "Dive deeper", and the clip players.
 (function () {
   var cfg = window.SITE_CONFIG || {};
 
@@ -41,7 +41,8 @@
   var toggle = document.querySelector('[data-waitlist-toggle]');
   var barField = document.getElementById('bar-signup-email');
   var mainForm = document.querySelector('#waitlist form[data-signup]');
-  var mainField = document.getElementById('signup-email');
+  // The button puts the cursor in the form's first box (first name, then email).
+  var mainField = document.getElementById('signup-name') || document.getElementById('signup-email');
 
   var toggleLabel = toggle ? toggle.textContent : '';
   function setOpen(open) {
@@ -78,6 +79,23 @@
     });
     bar.querySelectorAll('.site-nav-links a, .site-nav-brand').forEach(function (a) {
       a.addEventListener('click', function () { setOpen(false); });
+    });
+  }
+
+  // ---- "Dive deeper": the hero's button opens Terry's full description just below it.
+  // It starts closed (a link straight to #story starts it open); opening glides down to it.
+  var story = document.getElementById('story');
+  var dive = document.querySelector('.dive-deeper');
+  if (story && dive) {
+    var setStory = function (open) {
+      story.classList.toggle('collapsed', !open);
+      dive.setAttribute('aria-expanded', String(open));
+    };
+    setStory(location.hash === '#story');
+    dive.addEventListener('click', function () {
+      var open = story.classList.contains('collapsed');
+      setStory(open);
+      if (open) story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
     });
   }
 

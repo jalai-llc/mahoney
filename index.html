@@ -68,15 +68,27 @@
       <h1 class="hero-stagger" style="--stagger:2">Wave After Wave<span class="subtitle">What the Wrong Turns Gave Me</span></h1>
       <p class="byline hero-stagger" style="--stagger:3">Terry Mahoney</p>
       <p class="hero-desc hero-stagger" style="--stagger:4">
-        <cite>Wave After Wave: What the Wrong Turns Gave Me</cite> is a story of my quest to get my dad
-        to say, &ldquo;I love you,&rdquo; and &ldquo;I&rsquo;m proud of you.&rdquo; It&rsquo;s a code I cannot break.
+        <cite>Wave After Wave: What the Wrong Turns Gave Me</cite> is a sometimes hilarious, sometimes
+        heartbreaking journey sparked by one lifelong question: How do I get my father to say, &ldquo;I love
+        you&rdquo; or &ldquo;I&rsquo;m proud of you&rdquo;? The search takes me through unexpected adventures,
+        profound relationships, extraordinary circumstances, and life-altering events that challenge everything
+        I thought I knew. Told through interconnected vignettes, it explores life&rsquo;s waves of change and
+        trauma&mdash;and how we find our footing when they never fully recede.
       </p>
+      <!-- opens Terry's full description just below (js/main.js) -->
+      <button class="dive-deeper hero-stagger" style="--stagger:5" type="button" aria-expanded="false" aria-controls="story-more">
+        Dive deeper
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </section>
 
-  <!-- =================== THE STORY (Terry's description, continued from the hero) =================== -->
+  <!-- =================== THE STORY (Terry's full description; closed until "Dive deeper") =================== -->
   <section class="section story" id="story" aria-label="About the book">
+    <div class="story-more" id="story-more">
     <div class="story-inner">
+      <p><cite>Wave After Wave: What the Wrong Turns Gave Me</cite> is a story of my quest to get my dad
+        to say, &ldquo;I love you,&rdquo; and &ldquo;I&rsquo;m proud of you.&rdquo; It&rsquo;s a code I cannot break.</p>
       <p>I take an unconventionally comedic route to trying, but keep failing. Creating a charity and
         collecting cash from my neighbors didn&rsquo;t go over well, since the charity was me. Attempting
         financial independence through loansharking didn&rsquo;t do it, and I couldn&rsquo;t keep stealing
@@ -96,6 +108,7 @@
         persistence in my story, but the takeaway is coexistence.</p>
       <p class="story-close">How do you live happily carrying the trauma of the tsunami and something you cannot remove?</p>
     </div>
+    </div>
   </section>
 
   <!-- =================== WAITLIST (follows the story) =================== -->
@@ -106,10 +119,14 @@
         becomes available. If you would like to keep abreast of the progress I am making to get this book
         published and into the public&rsquo;s hands, add your email to my list. It won&rsquo;t be shared with
         anyone and I&rsquo;ll only send you an email when there is news to share.</p>
-      <form class="email-form light" data-signup data-msg="signup-msg">
-        <label class="sr-only" for="signup-email">Email address</label>
-        <input id="signup-email" type="email" name="email_address" required autocomplete="email" placeholder="your@email.com">
-        <button class="btn" type="submit">Join the waitlist</button>
+      <form class="waitlist-form" data-signup data-msg="signup-msg">
+        <label class="sr-only" for="signup-name">First name (optional)</label>
+        <input id="signup-name" class="name-field" type="text" name="fields[first_name]" autocomplete="given-name" placeholder="First name (optional)">
+        <div class="email-form light">
+          <label class="sr-only" for="signup-email">Email address</label>
+          <input id="signup-email" type="email" name="email_address" required autocomplete="email" placeholder="your@email.com">
+          <button class="btn" type="submit">Join the waitlist</button>
+        </div>
       </form>
       <p class="signup-msg" id="signup-msg" role="status" aria-live="polite"></p>
       <a href="#clips" class="secondary-link" data-clips-link>or hear Terry talk about it &darr;</a>

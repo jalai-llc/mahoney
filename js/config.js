@@ -12,6 +12,8 @@ window.SITE_CONFIG = {
 
   // Email sign-up ("Join the waitlist") — Kit form "Website signup".
   // Kit shows its own confirmation page after submit. Set `action` to "" to disable.
+  // The waitlist section's form also sends an optional first name (fields[first_name],
+  // Kit's built-in field); the top bar's form is email-only.
   emailSignup: {
     action: "https://app.kit.com/forms/10138863/subscriptions",
     fieldName: "email_address",
