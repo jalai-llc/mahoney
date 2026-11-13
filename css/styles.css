@@ -16,7 +16,8 @@
   --wave-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,24 C160,14 340,8 560,16 C780,24 900,34 1100,30 C1260,27 1344,30 1440,24 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
   --wave-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C150,10 330,6 520,16 C700,26 780,34 960,30 C1120,26 1200,12 1320,14 C1380,15 1410,24.4 1440,22 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
   --wave-foam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C240,6 480,38 720,22 C960,6 1200,38 1440,22 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
-  --wave-shore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,32 C150,22 300,18 480,20 C700,22 820,40 1000,42 C1180,44 1350,38 1440,32 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
+  --wave-surf: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,26 C80,10 160,10 240,26 C320,42 400,42 480,26 C560,10 640,10 720,26 C800,42 880,42 960,26 C1040,10 1120,10 1200,26 C1280,42 1360,42 1440,26 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
+  --wave-shore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C120,18 260,14 400,20 C540,26 600,36 760,36 C920,36 1000,18 1140,18 C1280,18 1360,38 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --wave-sea: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C240,10 480,50 720,30 C960,10 1200,50 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --wave-sea-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,24 C120,10 240,10 360,24 C480,38 600,38 720,24 C840,10 960,10 1080,24 C1200,38 1320,38 1440,24 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --wave-sea-mid: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,28 C200,14 400,12 600,22 C800,32 940,42 1140,38 C1260,36 1340,35 1440,28 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
@@ -177,12 +178,12 @@ img { max-width: 100%; display: block; }
    that reaches down into the section, so no movement ever opens a gap or lets a back layer's
    edge show. Layers, back to front:
      light sections: ::before = a 1px line that moves with the wave, ::after = the wave
-     shoreline (.book): ::before = pale wet sand, ::after = sand
+     shoreline (.book, three tones): ::before = pale foam, .shore-wave-mid = wet sand, ::after = sand
      footer (three tones): ::before = light blue, .foot-wave-mid = mid blue, ::after = navy
    Shapes are in :root above; each one tiles seamlessly so it can scroll forever. */
 .waitlist, .clips, .about, .book, footer { position: relative; }
 .waitlist::before, .waitlist::after, .clips::before, .clips::after, .about::before, .about::after,
-.book::before, .book::after, footer::before, footer::after, .foot-wave-mid {
+.book::before, .book::after, .shore-wave-mid, footer::before, footer::after, .foot-wave-mid {
   --wh: calc(var(--wave-h) + var(--lift, 0px));
   content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - var(--sink, 12px));
   height: calc(var(--wh) + var(--sink, 12px)); pointer-events: none; transform-origin: 50% 100%;
@@ -200,12 +201,14 @@ img { max-width: 100%; display: block; }
 .clips::after { background: var(--bg); }
 .about { --wave: var(--wave-c); --drift: 20s; --bob: 4.5s; --swell: 7s; }
 
-/* shoreline: a pale wet-sand band lapping quickly, then the sand */
-.book { --wave-h: clamp(30px, 4.5vw, 60px); }
-.book::before { --wave: var(--wave-foam); --lift: 14px; --sink: 12px; background: #ece3d0;
-  --drift: 11s; --dir: reverse; --bob: 3.1s; --bob-a: 5px; --swell: 5s; --swell-lo: .8; --swell-hi: 1.25; }
+/* shoreline: three waves washing up the sand, smaller and quicker toward the back */
+.book { --wave-h: clamp(36px, 5.5vw, 72px); }   /* .about's bottom padding leaves room for the tallest reach */
+.book::before { --wave: var(--wave-surf); --lift: 34px; --sink: 10px; background: #efe7d5;
+  --drift: 10s; --dir: reverse; --bob: 3s; --bob-a: 5px; --swell: 5s; --swell-lo: .8; --swell-hi: 1.25; }
+.shore-wave-mid { --wave: var(--wave-foam); --lift: 16px; --sink: 18px; background: #e5d9be;
+  --drift: 15s; --bob: 3.8s; --bob-a: 5px; --swell: 6s; --swell-lo: .85; --swell-hi: 1.2; }
 .book::after { --wave: var(--wave-shore); --sink: 28px; background: var(--sand);
-  --drift: 21s; --bob: 4.6s; --bob-a: 5px; --swell: 7s; --swell-lo: .85; --swell-hi: 1.15; }
+  --drift: 21s; --dir: reverse; --bob: 4.6s; --bob-a: 5px; --swell: 7s; --swell-lo: .85; --swell-hi: 1.15; }
 
 /* the page ends back in the ocean: three tones, each on its own rhythm */
 footer { --wave-h: clamp(40px, 6vw, 84px); }
@@ -224,7 +227,7 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink);
   @supports (overflow: clip) {
     .waitlist, .clips, .about, .book, footer { overflow-x: clip; }
     .waitlist::before, .waitlist::after, .clips::before, .clips::after, .about::before, .about::after,
-    .book::before, .book::after, footer::before, footer::after, .foot-wave-mid {
+    .book::before, .book::after, .shore-wave-mid, footer::before, footer::after, .foot-wave-mid {
       right: auto; width: 200%;
       -webkit-mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
               mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
@@ -307,7 +310,7 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink);
 .clip-title { font-size: clamp(17px, 1.6vw, 20px); line-height: 1.25; margin: 0; }
 
 /* ---------- About ---------- */
-.about { background: var(--white); }
+.about { background: var(--white); padding-bottom: 128px; }   /* room for the shoreline waves' reach */
 .about-grid { display: grid; gap: 40px; align-items: center; grid-template-columns: 1fr; max-width: 960px; margin: 0 auto; padding: 0 24px; }
 @media (min-width: 760px) { .about-grid { grid-template-columns: 280px 1fr; gap: 64px; } }
 .headshot { width: 100%; height: auto; max-width: 280px; margin: 0 auto; aspect-ratio: 1; object-fit: cover; border-radius: 8px;
