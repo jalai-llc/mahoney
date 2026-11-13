@@ -1,4 +1,4 @@
-// "Book Terry": tabs that swap between Cal.com calendars, embedded inline.
+// "Invite Terry": tabs that swap between Cal.com calendars, embedded inline.
 // The calendar loads only when the section scrolls near view (or a tab is clicked),
 // and each tab's calendar loads the first time it's opened. Every panel also has a
 // plain cal.com link, so booking still works if the embed is blocked.
