@@ -9,6 +9,7 @@
   --accent: #2a6b8c;
   --rule: #d8e0e6;
   --sand: #d9c9a8;
+  --sea-light: #e3eef4;   /* the "Dive deeper" story */
   --sand-rule: rgba(14, 31, 59, .15);
   /* wave-edge shapes (see "Wave edges between sections"). Each one tiles seamlessly
      (same height and slope at both ends) so it can scroll sideways forever. */
@@ -122,21 +123,33 @@ img { max-width: 100%; display: block; }
 .dive-deeper[aria-expanded="true"] svg { rotate: 180deg; animation: none; }
 @keyframes caret-bob { from { translate: 0 -2px; } to { translate: 0 4px; } }
 
-/* ---------- Story (Terry's full description, just below the hero; the waves flow into it) ----------
-   js/main.js closes it on load (.collapsed) and "Dive deeper" opens it; without JS it simply shows.
-   Rows going 0fr <-> 1fr animate the height. Closed, it takes no space: the hero's waves run
-   straight into the waitlist. */
-.story { background: var(--white); padding-top: 48px; padding-bottom: 48px; transition: padding .6s var(--ease); }
+/* ---------- Story (Terry's full description, just below the hero, in light blue) ----------
+   With JS on (.js on <html>, set in the <head>) it stays closed until "Dive deeper" puts
+   .story-open on <html> (js/main.js); without JS it simply shows. Rows going 0fr <-> 1fr animate
+   the height.
+   Closed, it takes no space and the hero's white waves run straight into the waitlist. Open, the
+   hero's waves turn light blue and flow into it, and a still white wave (::after) hands over to
+   the waitlist. */
+.story { --edge-h: clamp(28px, 4vw, 52px); position: relative; background: var(--sea-light);
+  padding: 48px 0 calc(40px + var(--edge-h)); transition: padding .6s var(--ease); }
+.story::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--edge-h);
+  background: var(--white); pointer-events: none; transition: opacity .4s;
+  -webkit-mask: var(--wave-b) left top / 100% 100% no-repeat;
+          mask: var(--wave-b) left top / 100% 100% no-repeat; }
+.hero > .wave-layers { color: var(--sea-light); transition: color .6s var(--ease); }
 .story-more { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .6s var(--ease); }
 .story-more > .story-inner { min-height: 0; overflow: hidden; }
-.story.collapsed { padding-top: 0; padding-bottom: 0; }
-.story.collapsed .story-more { grid-template-rows: 0fr; visibility: hidden;
+.js:not(.story-open) .story { padding-top: 0; padding-bottom: 0; }
+.js:not(.story-open) .story::after { opacity: 0; }
+.js:not(.story-open) .hero > .wave-layers { color: var(--white); }
+.js:not(.story-open) .story-more { grid-template-rows: 0fr; visibility: hidden;
   transition: grid-template-rows .6s var(--ease), visibility 0s .6s; }   /* hide only once folded */
 .story-inner { max-width: 640px; margin: 0 auto; padding: 0 24px; font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
 .story-close { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 2.4vw, 24px);
   line-height: 1.45; margin: 1.6em 0 0; text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
-  .story, .story-more, .story.collapsed .story-more, .dive-deeper svg { transition: none; }
+  .story, .story::after, .hero > .wave-layers, .story-more, .js:not(.story-open) .story-more,
+  .dive-deeper svg { transition: none; }
   .dive-deeper svg { animation: none; }
 }
 
@@ -163,7 +176,7 @@ img { max-width: 100%; display: block; }
   transition: transform .15s var(--ease), opacity .2s; }
 .btn:hover { transform: translateY(-1px); }
 
-/* animated wave layers at the foot of the hero, filled white like the sections that follow */
+/* animated wave layers at the foot of the hero (white, or light blue while the story is open) */
 .wave-layers { position: absolute; left: 0; right: 0; bottom: 0; height: 260px; overflow: hidden;
   pointer-events: none; color: var(--white); z-index: 1; }
 /* solid strip under the moving front wave so its lift never exposes the gradient */

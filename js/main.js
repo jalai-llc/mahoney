@@ -83,17 +83,19 @@
   }
 
   // ---- "Dive deeper": the hero's button opens Terry's full description just below it.
-  // It starts closed (a link straight to #story starts it open); opening glides down to it.
+  // Open or closed is .story-open on <html>; the <head> script sets the starting state (closed,
+  // or open for a link straight to #story). Opening glides down to it.
+  var page = document.documentElement;
   var story = document.getElementById('story');
   var dive = document.querySelector('.dive-deeper');
   if (story && dive) {
     var setStory = function (open) {
-      story.classList.toggle('collapsed', !open);
+      page.classList.toggle('story-open', open);
       dive.setAttribute('aria-expanded', String(open));
     };
-    setStory(location.hash === '#story');
+    setStory(page.classList.contains('story-open'));
     dive.addEventListener('click', function () {
-      var open = story.classList.contains('collapsed');
+      var open = !page.classList.contains('story-open');
       setStory(open);
       if (open) story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
     });
