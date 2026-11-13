@@ -10,12 +10,13 @@
   --rule: #d8e0e6;
   --sand: #d9c9a8;
   --sand-rule: rgba(14, 31, 59, .15);
-  /* wave-edge shapes (see "Wave edges between sections") */
+  /* wave-edge shapes (see "Wave edges between sections"). Each one tiles seamlessly
+     (same height and slope at both ends) so it can scroll sideways forever. */
   --wave-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C240,6 480,38 720,22 C960,6 1200,38 1440,22 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
-  --wave-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,26 C220,8 420,10 640,22 C860,34 1060,36 1260,20 C1340,14 1400,16 1440,18 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
-  --wave-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,14 C260,34 520,34 760,20 C1000,6 1220,8 1440,24 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
-  --wave-foam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,18 C200,4 380,8 560,20 C760,34 940,36 1120,20 C1270,8 1370,6 1440,12 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
-  --wave-shore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C180,12 360,14 540,28 C720,42 900,46 1100,30 C1260,18 1360,16 1440,22 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
+  --wave-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,24 C160,14 340,8 560,16 C780,24 900,34 1100,30 C1260,27 1344,30 1440,24 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
+  --wave-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C150,10 330,6 520,16 C700,26 780,34 960,30 C1120,26 1200,12 1320,14 C1380,15 1410,24.4 1440,22 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
+  --wave-foam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C240,6 480,38 720,22 C960,6 1200,38 1440,22 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
+  --wave-shore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,32 C150,22 300,18 480,20 C700,22 820,40 1000,42 C1180,44 1350,38 1440,32 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --wave-sea: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C240,10 480,50 720,30 C960,10 1200,50 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --wave-sea-back: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,24 C120,10 240,10 360,24 C480,38 600,38 720,24 C840,10 960,10 1080,24 C1200,38 1320,38 1440,24 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --font-display: "Fraunces", Georgia, serif;
@@ -169,36 +170,55 @@ img { max-width: 100%; display: block; }
 }
 
 /* ---------- Wave edges between sections ----------
-   Below the hero, each section rises into the one above it on a soft wave, echoing the hero's
-   waves. Two pseudo-elements draw it: ::after is the wave in the section's own colour; ::before
-   sits just behind it, peeking 1px above as a thin line (light sections) or as a second, paler
-   wave (the shoreline into the sand, and the ocean into the footer). Shapes are in :root above. */
+   Below the hero, each section rises into the one above it on a soft wave that moves like the
+   hero's: drifting sideways and bobbing gently. Two pseudo-elements draw it: ::after is the wave
+   in the section's own colour; ::before sits behind it, either peeking 1px above as a thin line
+   that moves with it (light sections) or as a second, paler wave on its own rhythm (the shoreline
+   into the sand, and the ocean into the footer). Each wave reaches 6px down into its own
+   section so the bob never opens a gap. Shapes are in :root above. */
 .waitlist, .clips, .about, .book, footer { position: relative; }
 .waitlist::before, .waitlist::after, .clips::before, .clips::after, .about::before, .about::after,
 .book::before, .book::after, footer::before, footer::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: 100%; height: var(--wave-h); pointer-events: none;
+  content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - 6px); height: calc(var(--wave-h) + 6px);
+  pointer-events: none;
   -webkit-mask: var(--wave) left bottom / 100% 100% repeat-x; mask: var(--wave) left bottom / 100% 100% repeat-x; }
 
 .waitlist, .clips, .about { --wave-h: clamp(18px, 3vw, 34px); }
-.waitlist::before, .clips::before, .about::before { background: var(--rule); transform: translateY(-1px); }
-.waitlist { --wave: var(--wave-a); }
+.waitlist::before, .clips::before, .about::before { background: var(--rule); bottom: calc(100% - 5px); }
+.waitlist { --wave: var(--wave-a); --drift: 26s; --bob: 5s; }
 .waitlist::after, .about::after { background: var(--white); }
-.clips { --wave: var(--wave-b); }
+.clips { --wave: var(--wave-b); --drift: 32s; --dir: reverse; --bob: 6s; }
 .clips::after { background: var(--bg); }
-.about { --wave: var(--wave-c); }
+.about { --wave: var(--wave-c); --drift: 29s; --bob: 5.5s; }
 
-/* shoreline: a pale wet-sand band, then the sand */
-.book { --wave-h: clamp(30px, 4.5vw, 60px); }
-.book::before { --wave: var(--wave-foam); height: calc(var(--wave-h) + 10px); background: #ece3d0; }
-.book::after { --wave: var(--wave-shore); background: var(--sand); }
+/* shoreline: a pale wet-sand band lapping on its own rhythm, then the sand */
+.book { --wave-h: clamp(30px, 4.5vw, 60px); --bob: 5s; }   /* both layers bob together, so neither dips below the other */
+.book::before { --wave: var(--wave-foam); --drift: 19s; --dir: reverse;
+  height: calc(var(--wave-h) + 16px); bottom: calc(100% - 3px); background: #ece3d0; }   /* ends inside the sand wave, so its soft edge never shows */
+.book::after { --wave: var(--wave-shore); --drift: 34s; background: var(--sand); }
 
-/* the page ends back in the ocean: a translucent back wave drifting behind a solid one */
-footer { --wave-h: clamp(34px, 5vw, 64px); }
-footer::before { --wave: var(--wave-sea-back); height: calc(var(--wave-h) + 14px); background: var(--accent); opacity: .55;
-  -webkit-mask-size: 900px 100%; mask-size: 900px 100%; animation: wave-drift 28s linear infinite; }
-footer::after { --wave: var(--wave-sea); background: var(--ink); }
-@keyframes wave-drift { to { -webkit-mask-position: -900px bottom; mask-position: -900px bottom; } }
-@media (prefers-reduced-motion: reduce) { footer::before { animation: none; } }
+/* the page ends back in the ocean: a translucent back wave behind a solid one */
+footer { --wave-h: clamp(34px, 5vw, 64px); --bob: 4.5s; }   /* both layers bob together (see .book) */
+footer::before { --wave: var(--wave-sea-back); --drift: 22s;
+  height: calc(var(--wave-h) + 20px); bottom: calc(100% - 3px); background: var(--accent); opacity: .55; }
+footer::after { --wave: var(--wave-sea); --drift: 36s; --dir: reverse; background: var(--ink); }
+
+/* Motion. Each wave is drawn twice as wide as the screen (one shape per screen width) and slides
+   left by one width per cycle, so it loops seamlessly; the bob is a separate, gentle up-and-down.
+   Both run on the GPU (transform/translate). Browsers without overflow: clip, and visitors who
+   ask for reduced motion, get the same waves standing still. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (overflow: clip) {
+    .waitlist, .clips, .about, .book, footer { overflow-x: clip; }
+    .waitlist::before, .waitlist::after, .clips::before, .clips::after, .about::before, .about::after,
+    .book::before, .book::after, footer::before, footer::after {
+      right: auto; width: 200%; -webkit-mask-size: 50% 100%; mask-size: 50% 100%;
+      animation: edge-drift var(--drift, 30s) linear infinite var(--dir, normal),
+                 edge-bob var(--bob, 5s) ease-in-out infinite alternate; }
+  }
+}
+@keyframes edge-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
+@keyframes edge-bob { from { translate: 0 -3px; } to { translate: 0 3px; } }
 
 /* ---------- Section heads ---------- */
 .section { padding: 96px 0; }   /* sections meet on wave edges (see "Wave edges" below), not lines */
