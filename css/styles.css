@@ -350,9 +350,6 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
   box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .25); }
 .about h2 { font-size: clamp(28px, 4vw, 44px); }
 .about .lead { font-size: 19px; line-height: 1.7; }
-.stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0 0; padding: 0; list-style: none; }
-.stat { font-family: var(--font-ui); font-size: 13px; font-weight: 600; padding: 6px 14px; border-radius: 999px;
-  background: rgba(14, 31, 59, .06); color: var(--ink); border: 1px solid rgba(14, 31, 59, .16); }
 
 /* ---------- Book Terry (Cal.com) ---------- */
 .book { background: var(--sand); border-bottom: 0; }
