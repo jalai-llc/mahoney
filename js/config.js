@@ -1,4 +1,4 @@
-// Site settings — the one file to edit when an account or link changes.
+// Site settings: the one file to edit when an account or link changes.
 window.SITE_CONFIG = {
   // Cal.com: the part after cal.com/ in the booking links.
   calUsername: "terrymahoneyauthor",
@@ -10,7 +10,7 @@ window.SITE_CONFIG = {
     greet: "greet",
   },
 
-  // Email sign-up ("Join the waitlist") — Kit form "Website signup".
+  // Email sign-up ("Join the waitlist"): Kit form "Website signup".
   // Kit shows its own confirmation page after submit. Set `action` to "" to disable.
   // The waitlist section's form also sends an optional first name (fields[first_name],
   // Kit's built-in field); the top bar's form is email-only.
@@ -38,7 +38,7 @@ window.SITE_CONFIG = {
     "never-ending": "",         // Drive: the_never-ending book journey.mp4
   },
 
-  // Shown in the booking section as "Prefer email?" — hidden while empty.
+  // Shown in the booking section as "Prefer email?"; hidden while empty.
   // e.g. "terry@terrymahoneyauthor.com" once forwarding is tested.
   contactEmail: "",
 };

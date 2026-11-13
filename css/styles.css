@@ -1,4 +1,4 @@
-/* Wave After Wave (Terry Mahoney) — one-page site.
+/* Wave After Wave (Terry Mahoney): one-page site.
    Look carried over from the original site: deep-water hero, italic Fraunces title,
    foam-white surface, sand panel. */
 :root {
@@ -124,12 +124,12 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Story (Terry's full description, just below the hero; the waves flow into it) ----------
    js/main.js closes it on load (.collapsed) and "Dive deeper" opens it; without JS it simply shows.
-   Rows going 0fr <-> 1fr animate the height. Closed, a narrow band of the hero's foam colour
-   stays between the hero's waves and the waitlist's. */
-.story { background: var(--bg); padding-top: 48px; transition: padding .6s var(--ease); }
+   Rows going 0fr <-> 1fr animate the height. Closed, it takes no space: the hero's waves run
+   straight into the waitlist. */
+.story { background: var(--white); padding-top: 48px; padding-bottom: 48px; transition: padding .6s var(--ease); }
 .story-more { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .6s var(--ease); }
 .story-more > .story-inner { min-height: 0; overflow: hidden; }
-.story.collapsed { padding-top: 0; padding-bottom: clamp(28px, 3.5vw, 44px); }
+.story.collapsed { padding-top: 0; padding-bottom: 0; }
 .story.collapsed .story-more { grid-template-rows: 0fr; visibility: hidden;
   transition: grid-template-rows .6s var(--ease), visibility 0s .6s; }   /* hide only once folded */
 .story-inner { max-width: 640px; margin: 0 auto; padding: 0 24px; font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
@@ -163,9 +163,9 @@ img { max-width: 100%; display: block; }
   transition: transform .15s var(--ease), opacity .2s; }
 .btn:hover { transform: translateY(-1px); }
 
-/* animated wave layers at the foot of the hero, filled with the page surface colour */
+/* animated wave layers at the foot of the hero, filled white like the sections that follow */
 .wave-layers { position: absolute; left: 0; right: 0; bottom: 0; height: 260px; overflow: hidden;
-  pointer-events: none; color: var(--bg); z-index: 1; }
+  pointer-events: none; color: var(--white); z-index: 1; }
 /* solid strip under the moving front wave so its lift never exposes the gradient */
 .wave-layers::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16px; background: currentColor; }
 .wave-layer { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; display: flex; will-change: transform; }
@@ -190,24 +190,18 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Wave edges between sections ----------
    Two kinds:
-   - Hero-style (the waitlist and the shoreline): a copy of the hero's three waves (.wave-layers
-     above: same markup, shapes and motion), set on the section's top edge so it rises out of the
-     section above. Its solid strip tucks into the section. Stacked over the section above, so
-     the two can meet up close.
+   - Hero-style (the shoreline): a copy of the hero's three waves (.wave-layers above: same
+     markup, shapes and motion), set on the section's top edge so it rises out of the section
+     above. Its solid strip tucks into the section.
    - Light sections (videos, about): one wave that drifts sideways, bobs, and slowly swells and
      settles, with a 1px line riding its top. Each is a masked block: the wave shape (--wave,
      --wave-h tall) sits on top of a solid band (--sink) that reaches down into the section, so no
      movement ever opens a gap. ::before = the line, ::after = the wave. Shapes are in :root above;
      each one tiles seamlessly so it can scroll forever.
-   The footer meets the sand on a plain straight edge. */
-.waitlist > .wave-layers, .book > .wave-layers { bottom: calc(100% - 16px); }
-/* waitlist: two pale-blue swells behind a white front wave, rising out of the hero's foam */
-.waitlist > .wave-layers { height: 150px; color: var(--white); }
-.waitlist > .wave-layers .wave-l1, .waitlist > .wave-layers .wave-l2 { color: var(--accent); }
-.waitlist > .wave-layers .wave-l1 { opacity: .1; }
-.waitlist > .wave-layers .wave-l2 { opacity: .16; }
+   The hero's own waves are white, like the story and the waitlist after it, so they flow
+   straight in with no edge. The footer meets the sand on a plain straight edge. */
 /* shoreline: the sand, washing up over About in the hero's tones-of-one-colour way */
-.book > .wave-layers { height: 180px; color: var(--sand); }
+.book > .wave-layers { bottom: calc(100% - 16px); height: 180px; color: var(--sand); }
 
 .clips, .about, .book { position: relative; }
 .clips::before, .clips::after, .about::before, .about::after {
@@ -254,7 +248,7 @@ img { max-width: 100%; display: block; }
 .section-head p { font-size: 18px; color: var(--muted); margin: 0; }
 
 /* ---------- Waitlist (Terry's note + the sign-up form, right after the story) ---------- */
-.waitlist { position: relative; background: var(--white); padding-top: 72px; }
+.waitlist { background: var(--white); padding-top: 72px; }
 .waitlist-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; text-align: center;
   display: flex; flex-direction: column; align-items: center; }
 .waitlist h2 { font-size: clamp(28px, 4vw, 42px); text-wrap: balance; }
