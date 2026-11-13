@@ -290,8 +290,6 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
 .name-field::placeholder { color: var(--muted); }
 .name-field:focus { border-color: var(--accent); }
 .signup-msg { min-height: 1.4em; margin: 12px 0 0; font-family: var(--font-ui); font-size: 14px; color: var(--muted); }
-.secondary-link { margin-top: 4px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .02em; color: var(--muted); border: 0; }
-.secondary-link:hover { color: var(--ink); }
 
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
 .clips { background: var(--bg); }
