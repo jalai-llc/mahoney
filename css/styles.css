@@ -124,33 +124,29 @@ img { max-width: 100%; display: block; }
 @keyframes caret-bob { from { translate: 0 -2px; } to { translate: 0 4px; } }
 
 /* ---------- Story (Terry's full description, just below the hero, in light blue) ----------
-   With JS on (.js on <html>, set in the <head>) it stays closed until "Dive deeper" puts
-   .story-open on <html> (js/main.js); without JS it simply shows. Rows going 0fr <-> 1fr animate
-   the height.
-   Closed, it takes no space and the hero's white waves run straight into the waitlist. Open, the
-   hero's waves turn light blue and flow into it, and a still white wave (::after) hands over to
-   the waitlist. */
+   With JS on (.js on <html>, set in the <head>) it's hidden until "Dive deeper" puts .story-open on
+   <html> (js/main.js); without JS it simply shows. It opens at full size in one step, so nothing
+   white shows while it would otherwise be growing: the page glides down to it and the text fades
+   up into place.
+   Closed, the hero's white waves run straight into the waitlist. Open, the hero's waves are light
+   blue and flow into it, and a still white wave (::after) hands over to the waitlist. */
 .story { --edge-h: clamp(28px, 4vw, 52px); position: relative; background: var(--sea-light);
-  padding: 48px 0 calc(40px + var(--edge-h)); transition: padding .6s var(--ease); }
+  padding: 48px 0 calc(40px + var(--edge-h)); }
 .story::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--edge-h);
-  background: var(--white); pointer-events: none; transition: opacity .4s;
+  background: var(--white); pointer-events: none;
   -webkit-mask: var(--wave-b) left top / 100% 100% no-repeat;
           mask: var(--wave-b) left top / 100% 100% no-repeat; }
-.hero > .wave-layers { color: var(--sea-light); transition: color .6s var(--ease); }
-.story-more { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .6s var(--ease); }
-.story-more > .story-inner { min-height: 0; overflow: hidden; }
-.js:not(.story-open) .story { padding-top: 0; padding-bottom: 0; }
-.js:not(.story-open) .story::after { opacity: 0; }
+.hero > .wave-layers { color: var(--sea-light); }
 .js:not(.story-open) .hero > .wave-layers { color: var(--white); }
-.js:not(.story-open) .story-more { grid-template-rows: 0fr; visibility: hidden;
-  transition: grid-template-rows .6s var(--ease), visibility 0s .6s; }   /* hide only once folded */
+.js:not(.story-open) .story { display: none; }
+.js.story-open .story-inner { animation: story-in .9s var(--ease) both; }
+@keyframes story-in { from { opacity: 0; translate: 0 18px; } }
 .story-inner { max-width: 640px; margin: 0 auto; padding: 0 24px; font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
 .story-close { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 2.4vw, 24px);
   line-height: 1.45; margin: 1.6em 0 0; text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
-  .story, .story::after, .hero > .wave-layers, .story-more, .js:not(.story-open) .story-more,
   .dive-deeper svg { transition: none; }
-  .dive-deeper svg { animation: none; }
+  .dive-deeper svg, .js.story-open .story-inner { animation: none; }
 }
 
 .email-form {
