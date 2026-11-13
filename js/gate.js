@@ -7,9 +7,11 @@
 //   printf '%s' newpassword | shasum -a 256
 // Anyone with the site open will be asked again on their next reload.
 //
-// Take the gate down: delete this file, the three "password gate" lines (comment, robots
-// meta, script tag) at the end of the <head> in index.html, and the "Password gate" block
-// at the end of css/styles.css.
+// On/off: the gate runs only while index.html loads this file. It is OFF (since Nov 13 2026):
+// the robots meta and script tag at the end of the <head> are inside a comment. Move them out
+// of it to turn the gate back on. (The "Password gate" block at the end of css/styles.css does
+// nothing while it's off.)
+// Remove it for good: delete this file, those <head> lines, and that CSS block.
 (function () {
   var HASH = '11cc76fe5951a65eea4b4632a4142fa44539d9a4c11adc6232c762789eabac7d';
   var KEY = 'site-gate';

@@ -19,9 +19,11 @@
        Set here, before the page shows, so it never flashes open. -->
   <script>document.documentElement.classList.add('js');
     if (location.hash === '#story') document.documentElement.classList.add('story-open');</script>
-  <!-- password gate (temporary; see js/gate.js): keep search engines out and cover the page -->
+  <!-- password gate (see js/gate.js): keeps search engines out and covers the page.
+       OFF since Nov 13 2026. To turn it back on, move the two lines below out of this comment.
   <meta name="robots" content="noindex, nofollow">
   <script src="js/gate.js"></script>
+  -->
 </head>
 <body>
 
