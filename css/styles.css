@@ -12,13 +12,8 @@
   --sand-rule: rgba(14, 31, 59, .15);
   /* wave-edge shapes (see "Wave edges between sections"). Each one tiles seamlessly
      (same height and slope at both ends) so it can scroll sideways forever. */
-  --wave-a: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C240,6 480,38 720,22 C960,6 1200,38 1440,22 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
   --wave-b: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,24 C160,14 340,8 560,16 C780,24 900,34 1100,30 C1260,27 1344,30 1440,24 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
   --wave-c: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 40' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C150,10 330,6 520,16 C700,26 780,34 960,30 C1120,26 1200,12 1320,14 C1380,15 1410,24.4 1440,22 L1440,40 L0,40 Z'/%3E%3C/svg%3E");
-  --wave-foam: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,22 C240,6 480,38 720,22 C960,6 1200,38 1440,22 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
-  --wave-surf: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,26 C80,10 160,10 240,26 C320,42 400,42 480,26 C560,10 640,10 720,26 C800,42 880,42 960,26 C1040,10 1120,10 1200,26 C1280,42 1360,42 1440,26 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
-  --wave-shore: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C120,18 260,14 400,20 C540,26 600,36 760,36 C920,36 1000,18 1140,18 C1280,18 1360,38 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
-  --wave-sea: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 60' preserveAspectRatio='none'%3E%3Cpath d='M0,30 C240,10 480,50 720,30 C960,10 1200,50 1440,30 L1440,60 L0,60 Z'/%3E%3C/svg%3E");
   --font-display: "Fraunces", Georgia, serif;
   --font-body: "Source Serif 4", Georgia, serif;
   --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -194,19 +189,29 @@ img { max-width: 100%; display: block; }
 }
 
 /* ---------- Wave edges between sections ----------
-   The waitlist rises out of the foam on the hero's own three waves (see "Waitlist" below).
-   After that, each section rises into the one above it on a wave that drifts sideways, bobs,
-   and slowly swells taller and settles. Each layer is a masked block: the wave shape (--wave,
-   --wave-h tall, plus --lift) sits on top of a solid band (--sink) that reaches down into the
-   section, so no movement ever opens a gap or lets a back layer's edge show. Layers, back to front:
-     light sections: ::before = a 1px line that moves with the wave, ::after = the wave
-     shoreline (.book, three tones): ::before = pale foam, .shore-wave-mid = wet sand, ::after = sand
-     footer: ::after = one navy wave, standing still
-   Shapes are in :root above; each one tiles seamlessly so it can scroll forever. */
-.clips, .about, .book, footer { position: relative; }
-.clips::before, .clips::after, .about::before, .about::after,
-.book::before, .book::after, .shore-wave-mid, footer::after {
-  --wh: calc(var(--wave-h) + var(--lift, 0px));
+   Two kinds:
+   - Hero-style (the waitlist and the shoreline): a copy of the hero's three waves (.wave-layers
+     above: same markup, shapes and motion), set on the section's top edge so it rises out of the
+     section above. Its solid strip tucks into the section. Stacked over the section above, so
+     the two can meet up close.
+   - Light sections (videos, about): one wave that drifts sideways, bobs, and slowly swells and
+     settles, with a 1px line riding its top. Each is a masked block: the wave shape (--wave,
+     --wave-h tall) sits on top of a solid band (--sink) that reaches down into the section, so no
+     movement ever opens a gap. ::before = the line, ::after = the wave. Shapes are in :root above;
+     each one tiles seamlessly so it can scroll forever.
+   The footer meets the sand on a plain straight edge. */
+.waitlist > .wave-layers, .book > .wave-layers { bottom: calc(100% - 16px); }
+/* waitlist: two pale-blue swells behind a white front wave, rising out of the hero's foam */
+.waitlist > .wave-layers { height: 150px; color: var(--white); }
+.waitlist > .wave-layers .wave-l1, .waitlist > .wave-layers .wave-l2 { color: var(--accent); }
+.waitlist > .wave-layers .wave-l1 { opacity: .1; }
+.waitlist > .wave-layers .wave-l2 { opacity: .16; }
+/* shoreline: the sand, washing up over About in the hero's tones-of-one-colour way */
+.book > .wave-layers { height: 180px; color: var(--sand); }
+
+.clips, .about, .book { position: relative; }
+.clips::before, .clips::after, .about::before, .about::after {
+  --wh: var(--wave-h);
   content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - var(--sink, 12px));
   height: calc(var(--wh) + var(--sink, 12px)); pointer-events: none; transform-origin: 50% 100%;
   -webkit-mask: var(--wave) left top / 100% var(--wh) repeat-x,
@@ -222,39 +227,20 @@ img { max-width: 100%; display: block; }
 .clips::after { background: var(--bg); }
 .about { --wave: var(--wave-c); --drift: 20s; --bob: 4.5s; --swell: 7s; }
 
-/* shoreline: three waves washing up the sand out of step with one another. Each has its own
-   unrelated timings and starts partway through them (the negative --d-* delays), so they never
-   rise together; the pale foam reaches furthest up. */
-.book { --wave-h: clamp(36px, 5.5vw, 72px); }   /* .about's bottom padding leaves room for the tallest reach */
-.book::before { --wave: var(--wave-surf); --lift: 58px; --sink: 10px; background: #efe7d5;
-  --drift: 11s; --dir: reverse; --bob: 3.7s; --bob-a: 10px; --swell: 4.3s; --swell-lo: .9; --swell-hi: 1.15;
-  --d-drift: -4s; --d-bob: -1.1s; --d-swell: -3.2s; }
-.shore-wave-mid { --wave: var(--wave-foam); --lift: 16px; --sink: 18px; background: #e5d9be;
-  --drift: 17s; --bob: 5.9s; --bob-a: 8px; --swell: 8.3s; --swell-lo: .8; --swell-hi: 1.2;
-  --d-drift: -11s; --d-bob: -3.9s; --d-swell: -1.7s; }
-.book::after { --wave: var(--wave-shore); --sink: 28px; background: var(--sand);
-  --drift: 29s; --dir: reverse; --bob: 4.9s; --bob-a: 6px; --swell: 6.7s; --swell-lo: .85; --swell-hi: 1.15;
-  --d-drift: -17s; --d-bob: -2.6s; --d-swell: -5.4s; }
-
-/* the page ends back in the ocean: one navy wave, standing still */
-footer { --wave-h: clamp(40px, 6vw, 84px); }
-footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
-
 /* Motion. Each layer is drawn twice as wide as the screen (one shape per screen width) and slides
    left by one width per cycle, so it loops seamlessly; the bob and the swell run on their own
    timers. All three are GPU transforms. Browsers without overflow: clip, and visitors who ask
    for reduced motion, get the same waves standing still. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (overflow: clip) {
-    .clips, .about, .book { overflow-x: clip; }
-    .clips::before, .clips::after, .about::before, .about::after,
-    .book::before, .book::after, .shore-wave-mid {
+    .clips, .about { overflow-x: clip; }
+    .clips::before, .clips::after, .about::before, .about::after {
       right: auto; width: 200%;
       -webkit-mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
               mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
-      animation: edge-drift var(--drift, 24s) linear var(--d-drift, 0s) infinite var(--dir, normal),
-                 edge-bob var(--bob, 4.5s) ease-in-out var(--d-bob, 0s) infinite alternate,
-                 edge-swell var(--swell, 7s) ease-in-out var(--d-swell, 0s) infinite alternate; }
+      animation: edge-drift var(--drift, 24s) linear infinite var(--dir, normal),
+                 edge-bob var(--bob, 4.5s) ease-in-out infinite alternate,
+                 edge-swell var(--swell, 7s) ease-in-out infinite alternate; }
   }
 }
 @keyframes edge-drift { from { transform: translate3d(0, 0, 0); } to { transform: translate3d(-50%, 0, 0); } }
@@ -269,13 +255,6 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
 
 /* ---------- Waitlist (Terry's note + the sign-up form, right after the story) ---------- */
 .waitlist { position: relative; background: var(--white); padding-top: 72px; }
-/* It rises out of the foam on the hero's own three waves: the same markup, shapes and motion
-   (.wave-layers above), here two pale-blue swells behind a white front wave. Stacked over the
-   hero's foam, so the two can meet up close. */
-.waitlist > .wave-layers { bottom: calc(100% - 16px); height: 150px; color: var(--white); }
-.waitlist > .wave-layers .wave-l1, .waitlist > .wave-layers .wave-l2 { color: var(--accent); }
-.waitlist > .wave-layers .wave-l1 { opacity: .1; }
-.waitlist > .wave-layers .wave-l2 { opacity: .16; }
 .waitlist-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; text-align: center;
   display: flex; flex-direction: column; align-items: center; }
 .waitlist h2 { font-size: clamp(28px, 4vw, 42px); text-wrap: balance; }
@@ -350,6 +329,10 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
   box-shadow: 0 20px 50px -20px rgba(0, 0, 0, .25); }
 .about h2 { font-size: clamp(28px, 4vw, 44px); }
 .about .lead { font-size: 19px; line-height: 1.7; }
+/* sized so all four sit on one line on desktop; on narrow screens they wrap */
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin: 24px 0 0; padding: 0; list-style: none; }
+.stat { font-family: var(--font-ui); font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  background: rgba(14, 31, 59, .06); color: var(--ink); border: 1px solid rgba(14, 31, 59, .16); }
 
 /* ---------- Book Terry (Cal.com) ---------- */
 .book { background: var(--sand); border-bottom: 0; }
@@ -371,7 +354,7 @@ footer::after { --wave: var(--wave-sea); --sink: 30px; background: var(--ink); }
 .contact-line a { color: var(--ink); }
 
 /* ---------- Footer ---------- */
-footer { background: var(--ink); color: rgba(244, 248, 249, .6); padding: 52px 0 36px;   /* extra top room for the waves' reach */
+footer { background: var(--ink); color: rgba(244, 248, 249, .6); padding: 40px 0 36px;
   font-family: var(--font-ui); font-size: 13px; }
 .foot-grid { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; align-items: center; }
 .foot-brand { font-family: var(--font-display); font-style: italic; font-size: 16px; color: rgba(244, 248, 249, .85); }
