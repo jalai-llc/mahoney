@@ -10,6 +10,7 @@
   --rule: #d8e0e6;
   --sand: #d9c9a8;
   --sea-light: #e3eef4;   /* the "Dive deeper" story */
+  --roll: 1.1s;           /* how long it takes to unroll or roll back up */
   --sand-rule: rgba(14, 31, 59, .15);
   /* wave-edge shapes (see "Wave edges between sections"). Each one tiles seamlessly
      (same height and slope at both ends) so it can scroll sideways forever. */
@@ -124,29 +125,34 @@ img { max-width: 100%; display: block; }
 @keyframes caret-bob { from { translate: 0 -2px; } to { translate: 0 4px; } }
 
 /* ---------- Story (Terry's full description, just below the hero, in light blue) ----------
-   With JS on (.js on <html>, set in the <head>) it's hidden until "Dive deeper" puts .story-open on
-   <html> (js/main.js); without JS it simply shows. It opens at full size in one step, so nothing
-   white shows while it would otherwise be growing: the page glides down to it and the text fades
-   up into place.
-   Closed, the hero's white waves run straight into the waitlist. Open, the hero's waves are light
-   blue and flow into it, and a still white wave (::after) hands over to the waitlist. */
-.story { --edge-h: clamp(28px, 4vw, 52px); position: relative; background: var(--sea-light);
-  padding: 48px 0 calc(40px + var(--edge-h)); }
-.story::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: var(--edge-h);
+   With JS on (.js on <html>, set in the <head>) it's closed until "Dive deeper" puts .story-open on
+   <html> (js/main.js); without JS it simply shows.
+   Closed, it takes no space and the hero's white waves run straight into the waitlist. Open, the
+   hero's waves are light blue and flow into it, and a still white wave (::after) hands over to
+   the waitlist.
+   It unrolls like a sheet: the section is a one-row grid going 0fr <-> 1fr, clipped, with its wavy
+   edge pinned to the bottom, so the edge travels down the page as it opens. The hero's waves turn
+   light blue the moment it starts opening, and turn white only once it has rolled fully back up,
+   so no white band ever shows between them. */
+.story { --edge-h: clamp(28px, 4vw, 52px); position: relative; display: grid; grid-template-rows: 1fr;
+  overflow: hidden; background: var(--sea-light);
+  transition: grid-template-rows var(--roll) cubic-bezier(.4, 0, .2, 1); }
+.story-body { min-height: 0; overflow: hidden; }
+.story::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: var(--edge-h);
   background: var(--white); pointer-events: none;
   -webkit-mask: var(--wave-b) left top / 100% 100% no-repeat;
           mask: var(--wave-b) left top / 100% 100% no-repeat; }
 .hero > .wave-layers { color: var(--sea-light); }
-.js:not(.story-open) .hero > .wave-layers { color: var(--white); }
-.js:not(.story-open) .story { display: none; }
-.js.story-open .story-inner { animation: story-in .9s var(--ease) both; }
-@keyframes story-in { from { opacity: 0; translate: 0 18px; } }
-.story-inner { max-width: 640px; margin: 0 auto; padding: 0 24px; font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
+.js:not(.story-open) .story { grid-template-rows: 0fr; }
+.js:not(.story-open) .story-body { visibility: hidden; transition: visibility 0s var(--roll); }
+.js:not(.story-open) .hero > .wave-layers { color: var(--white); transition: color 0s var(--roll); }
+.story-inner { max-width: 640px; margin: 0 auto; padding: 88px 24px calc(56px + var(--edge-h)); font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
 .story-close { font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 2.4vw, 24px);
   line-height: 1.45; margin: 1.6em 0 0; text-wrap: balance; }
 @media (prefers-reduced-motion: reduce) {
-  .dive-deeper svg { transition: none; }
-  .dive-deeper svg, .js.story-open .story-inner { animation: none; }
+  .dive-deeper svg, .story, .js:not(.story-open) .story-body,
+  .js:not(.story-open) .hero > .wave-layers { transition: none; }
+  .dive-deeper svg { animation: none; }
 }
 
 .email-form {
@@ -180,9 +186,9 @@ img { max-width: 100%; display: block; }
 .wave-layer { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; display: flex; will-change: transform; }
 .wave-layer svg { flex: 1 0 50%; width: 50%; height: 100%; display: block; }
 .wave-layer path { fill: currentColor; }
-.wave-l1 { opacity: .25; animation: wave-back 22s ease-in-out infinite; }
-.wave-l2 { opacity: .4; animation: wave-mid 16s ease-in-out infinite reverse; }
-.wave-l3 { opacity: 1; animation: wave-front 11s ease-in-out infinite; }
+.wave-l1 { opacity: .25; animation: wave-back 40s ease-in-out infinite; }
+.wave-l2 { opacity: .4; animation: wave-mid 30s ease-in-out infinite reverse; }
+.wave-l3 { opacity: 1; animation: wave-front 20s ease-in-out infinite; }
 @keyframes wave-back  { 0% { transform: translate3d(0,0,0); } 25% { transform: translate3d(-12.5%,-22px,0); } 50% { transform: translate3d(-25%,0,0); } 75% { transform: translate3d(-37.5%,18px,0); } 100% { transform: translate3d(-50%,0,0); } }
 @keyframes wave-mid   { 0% { transform: translate3d(0,6px,0); } 25% { transform: translate3d(-12.5%,-14px,0); } 50% { transform: translate3d(-25%,6px,0); } 75% { transform: translate3d(-37.5%,-10px,0); } 100% { transform: translate3d(-50%,6px,0); } }
 @keyframes wave-front { 0% { transform: translate3d(0,0,0); } 25% { transform: translate3d(-12.5%,-10px,0); } 50% { transform: translate3d(-25%,4px,0); } 75% { transform: translate3d(-37.5%,-8px,0); } 100% { transform: translate3d(-50%,0,0); } }
