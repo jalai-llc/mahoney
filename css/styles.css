@@ -114,17 +114,26 @@ img { max-width: 100%; display: block; }
 .hero-desc cite { font-style: italic; }
 .hero-desc + .hero-desc { margin-top: 1.1em; }   /* the closing sentence stands on its own */
 /* "Dive deeper": opens Terry's full description below the hero. The caret bobs downward,
-   then flips to point up once open. (translate/rotate are separate so both can run.) */
-.dive-deeper { display: inline-flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 30px;
+   then flips to point up once open, when the label reads "Rise to the surface".
+   (translate/rotate are separate so both can run.) "Rise to the surface" at the end of the
+   story (.rise) is its mirror: caret on top, bobbing upward. */
+.dive-deeper, .rise { display: inline-flex; flex-direction: column; align-items: center; gap: 2px;
   padding: 8px 14px 6px calc(14px + .2em); border: 0; border-radius: 10px; background: none; cursor: pointer;
   font-family: var(--font-ui); font-size: 13px; font-weight: 500; letter-spacing: .2em; text-transform: uppercase;
-  color: rgba(244, 248, 249, .78); transition: color .2s; }
+  transition: color .2s; }
+.dive-deeper { margin-top: 30px; color: rgba(244, 248, 249, .78); }
 .dive-deeper:hover { color: var(--bg); }
 .dive-deeper:focus-visible { outline-color: rgba(244, 248, 249, .85); }   /* the accent blends into the hero */
 .dive-deeper svg { width: 22px; height: 22px; transition: rotate .4s var(--ease);
   animation: caret-bob 1.6s ease-in-out infinite alternate; }
 .dive-deeper[aria-expanded="true"] svg { rotate: 180deg; animation: none; }
 @keyframes caret-bob { from { translate: 0 -2px; } to { translate: 0 4px; } }
+.rise-wrap { margin: 2.8em 0 0; text-align: center; }
+.rise { padding: 6px 14px 8px calc(14px + .2em); color: var(--accent); }
+.rise:hover { color: var(--ink); }
+.rise svg { width: 22px; height: 22px; animation: caret-rise 1.6s ease-in-out infinite alternate; }
+@keyframes caret-rise { from { translate: 0 2px; } to { translate: 0 -4px; } }
+html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't close */
 
 /* ---------- Story (Terry's full description, just below the hero, in light blue) ----------
    With JS on (.js on <html>, set in the <head>) it's closed until "Dive deeper" puts .story-open on
@@ -154,7 +163,7 @@ img { max-width: 100%; display: block; }
 @media (prefers-reduced-motion: reduce) {
   .dive-deeper svg, .story, .js:not(.story-open) .story-body,
   .js:not(.story-open) .hero > .wave-layers { transition: none; }
-  .dive-deeper svg { animation: none; }
+  .dive-deeper svg, .rise svg { animation: none; }
 }
 
 .email-form {

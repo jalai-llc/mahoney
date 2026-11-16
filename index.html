@@ -84,9 +84,10 @@
         Told through interconnected vignettes, it explores life&rsquo;s waves of change and trauma, and how
         we find our footing when they never fully recede.
       </p>
-      <!-- opens Terry's full description just below (js/main.js) -->
-      <button class="dive-deeper hero-stagger" style="--stagger:6" type="button" aria-expanded="false" aria-controls="story">
-        Dive deeper
+      <!-- opens Terry's full description just below; reads "Rise to the surface" while open (js/main.js) -->
+      <button class="dive-deeper hero-stagger" style="--stagger:6" type="button" aria-expanded="false" aria-controls="story"
+        data-closed="Dive deeper" data-open="Rise to the surface">
+        <span data-label>Dive deeper</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 9l7 7 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
@@ -110,12 +111,19 @@
         haunts me. I keep drowning in my sleep. Then I am faced with another catastrophe.</p>
       <p>Only then do I realize his code was written when he was four years old, enduring his own
         catastrophe. And he had been transmitting for forty years.</p>
-      <p>The discovery of his design answers the question tearing me apart and gives me something I can live with.</p>
+      <p>The discovery of design answers the question tearing me apart and gives me something I can live with.</p>
       <p>While I am a survivor, this isn&rsquo;t a survival story or a conquering story. I can&rsquo;t conquer
         the tsunami, and I can&rsquo;t conquer what came after. So many people are carrying something they
         can&rsquo;t overcome, or something that isn&rsquo;t going anywhere. There is resilience and
         persistence in my story, but the takeaway is coexistence.</p>
       <p class="story-close">How do you live happily carrying the trauma of the tsunami and something you cannot remove?</p>
+      <!-- glides back up to the blurb, then rolls the story shut (js/main.js) -->
+      <div class="rise-wrap">
+        <button class="rise" type="button" aria-controls="story">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 15l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Rise to the surface
+        </button>
+      </div>
     </div>
     </div>
   </section>

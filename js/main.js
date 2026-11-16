@@ -82,22 +82,43 @@
     });
   }
 
-  // ---- "Dive deeper": the hero's button opens Terry's full description just below it.
-  // Open or closed is .story-open on <html>; the <head> script sets the starting state (closed,
-  // or open for a link straight to #story). Opening glides down to it.
+  // ---- "Dive deeper": the hero's button opens Terry's full description just below it, and
+  // reads "Rise to the surface" while it's open. Open or closed is .story-open on <html>; the
+  // <head> script sets the starting state (closed, or open for a link straight to #story).
+  // Opening glides down to it. "Rise to the surface" at the end of the story glides back up to
+  // the blurb first and only then rolls the story shut, so the page never jumps under the reader.
   var page = document.documentElement;
   var story = document.getElementById('story');
   var dive = document.querySelector('.dive-deeper');
+  var rise = document.querySelector('.rise');
   if (story && dive) {
+    var label = dive.querySelector('[data-label]');
     var setStory = function (open) {
       page.classList.toggle('story-open', open);
       dive.setAttribute('aria-expanded', String(open));
+      if (label) label.textContent = dive.getAttribute(open ? 'data-open' : 'data-closed');
+    };
+    // Calls back once the page has stopped scrolling (a smooth scroll can't be awaited everywhere).
+    var afterScroll = function (done) {
+      var lastY = -1, still = 0, start = performance.now();
+      (function check(now) {
+        still = window.scrollY === lastY ? still + 1 : 0;
+        lastY = window.scrollY;
+        if (still >= 6 || now - start > 2000) done(); else requestAnimationFrame(check);
+      })(start);
     };
     setStory(page.classList.contains('story-open'));
     dive.addEventListener('click', function () {
       var open = !page.classList.contains('story-open');
       setStory(open);
       if (open) story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
+    });
+    if (rise) rise.addEventListener('click', function () {
+      dive.scrollIntoView({ block: 'center' });
+      afterScroll(function () {
+        setStory(false);
+        dive.focus({ preventScroll: true });
+      });
     });
   }
 
