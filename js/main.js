@@ -82,21 +82,19 @@
     });
   }
 
-  // ---- "Dive deeper": the hero's button opens Terry's full description just below it, and
-  // reads "Rise to the surface" while it's open. Open or closed is .story-open on <html>; the
+  // ---- "Dive deeper": the hero's button opens Terry's full description just below it (if it
+  // isn't open already) and glides down to it. Open or closed is .story-open on <html>; the
   // <head> script sets the starting state (closed, or open for a link straight to #story).
-  // Opening glides down to it. "Rise to the surface" at the end of the story glides back up to
-  // the blurb first and only then rolls the story shut, so the page never jumps under the reader.
+  // "Rise to the surface" at the end of the story glides back up in one movement, stopping with
+  // the story just out of sight below, and folds it away there, so it never visibly rolls shut.
   var page = document.documentElement;
   var story = document.getElementById('story');
   var dive = document.querySelector('.dive-deeper');
   var rise = document.querySelector('.rise');
   if (story && dive) {
-    var label = dive.querySelector('[data-label]');
     var setStory = function (open) {
       page.classList.toggle('story-open', open);
       dive.setAttribute('aria-expanded', String(open));
-      if (label) label.textContent = dive.getAttribute(open ? 'data-open' : 'data-closed');
     };
     // Calls back once the page has stopped scrolling (a smooth scroll can't be awaited everywhere).
     var afterScroll = function (done) {
@@ -109,15 +107,19 @@
     };
     setStory(page.classList.contains('story-open'));
     dive.addEventListener('click', function () {
-      var open = !page.classList.contains('story-open');
-      setStory(open);
-      if (open) story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
+      setStory(true);
+      story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
     });
     if (rise) rise.addEventListener('click', function () {
-      dive.scrollIntoView({ block: 'center' });
+      // Stop where the story's top meets the bottom of the screen: the blurb and the button above,
+      // the story just out of sight below.
+      var top = story.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: Math.max(0, top - window.innerHeight) });
       afterScroll(function () {
+        page.classList.add('story-quiet');
         setStory(false);
         dive.focus({ preventScroll: true });
+        setTimeout(function () { page.classList.remove('story-quiet'); }, 1000);
       });
     });
   }
