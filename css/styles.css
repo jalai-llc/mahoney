@@ -112,7 +112,8 @@ img { max-width: 100%; display: block; }
 .hero-desc { max-width: 640px; margin: 0 auto; font-size: clamp(18px, 2vw, 21px); line-height: 1.7; color: rgba(244, 248, 249, .9);
   text-wrap: pretty; }   /* no one-word last lines where browsers support it */
 .hero-desc cite { font-style: italic; }
-.hero-desc + .hero-desc { margin-top: 1.1em; }   /* the closing sentence stands on its own */
+.hero-desc + .hero-desc { margin-top: 1.1em; }
+#waitlist-title:focus { outline: none; }   /* focused by "Rise to the surface" only to move the reader on */   /* the closing sentence stands on its own */
 /* "Dive deeper": opens Terry's full description below the hero; its caret bobs downward.
    "Rise to the surface" at the end of the story (.rise) is its mirror: caret on top, bobbing
    upward. */
@@ -154,8 +155,8 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .js:not(.story-open) .story { grid-template-rows: 0fr; }
 .js:not(.story-open) .story-body { visibility: hidden; transition: visibility 0s var(--roll); }
 .js:not(.story-open) .hero > .wave-layers { color: var(--white); transition: color 0s var(--roll); }
-/* "Rise to the surface" closes it out of sight (js/main.js adds .story-quiet): no roll, and the
-   hero's waves fade back to white */
+/* "Rise to the surface" closes it out of sight, above the reader (js/main.js adds .story-quiet):
+   no roll, and the hero's waves go back to white */
 .story-quiet .story, .story-quiet.js:not(.story-open) .story-body { transition: none; }
 .story-quiet.js:not(.story-open) .hero > .wave-layers { transition: color .9s ease; }
 .story-inner { max-width: 640px; margin: 0 auto; padding: 88px 24px calc(56px + var(--edge-h)); font-size: clamp(18px, 2vw, 20px); line-height: 1.75; }
@@ -196,7 +197,7 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 /* solid strip under the moving front wave so its lift never exposes the gradient */
 .wave-layers::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 16px; background: currentColor; }
 .wave-layer { position: absolute; bottom: 0; left: 0; width: 200%; height: 100%; display: flex; will-change: transform; }
-.wave-layer svg { flex: 1 0 50%; width: 50%; height: 100%; display: block; }
+.wave-layer svg { flex: 1 0 100%; width: 100%; height: 100%; display: block; }   /* one drawing, two wave lengths: no seam (Safari showed a hairline where two met) */
 .wave-layer path { fill: currentColor; }
 .wave-l1 { opacity: .25; animation: wave-back 40s ease-in-out infinite; }
 .wave-l2 { opacity: .4; animation: wave-mid 30s ease-in-out infinite reverse; }

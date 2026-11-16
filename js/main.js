@@ -85,24 +85,30 @@
   // ---- "Dive deeper": the hero's button opens Terry's full description just below it (if it
   // isn't open already) and glides down to it. Open or closed is .story-open on <html>; the
   // <head> script sets the starting state (closed, or open for a link straight to #story).
-  // "Rise to the surface" at the end of the story glides back up in one movement, stopping with
-  // the story just out of sight below, and folds it away there, so it never visibly rolls shut.
+  // "Rise to the surface" at the end of the story carries the reader on: it glides down to the
+  // waitlist, then folds the story away above, out of sight, keeping the waitlist exactly where it
+  // is on screen.
   var page = document.documentElement;
   var story = document.getElementById('story');
   var dive = document.querySelector('.dive-deeper');
   var rise = document.querySelector('.rise');
+  var waitlist = document.getElementById('waitlist');
   if (story && dive) {
     var setStory = function (open) {
       page.classList.toggle('story-open', open);
       dive.setAttribute('aria-expanded', String(open));
     };
-    // Calls back once the page has stopped scrolling (a smooth scroll can't be awaited everywhere).
+    // Calls back once a smooth scroll has finished (it can't be awaited everywhere): the page has
+    // moved and then held still, or never moved at all (already there), or 2.5s have passed.
     var afterScroll = function (done) {
-      var lastY = -1, still = 0, start = performance.now();
+      var startY = window.scrollY, lastY = startY, still = 0, start = performance.now();
       (function check(now) {
-        still = window.scrollY === lastY ? still + 1 : 0;
-        lastY = window.scrollY;
-        if (still >= 6 || now - start > 2000) done(); else requestAnimationFrame(check);
+        var y = window.scrollY;
+        still = y === lastY ? still + 1 : 0;
+        lastY = y;
+        var moved = y !== startY;
+        if ((moved && still >= 6) || (!moved && now - start > 500) || now - start > 2500) done();
+        else requestAnimationFrame(check);
       })(start);
     };
     setStory(page.classList.contains('story-open'));
@@ -110,15 +116,17 @@
       setStory(true);
       story.scrollIntoView({ block: 'start' });   // smooth via css, unless reduced motion
     });
-    if (rise) rise.addEventListener('click', function () {
-      // Stop where the story's top meets the bottom of the screen: the blurb and the button above,
-      // the story just out of sight below.
-      var top = story.getBoundingClientRect().top + window.scrollY;
-      window.scrollTo({ top: Math.max(0, top - window.innerHeight) });
+    if (rise && waitlist) rise.addEventListener('click', function () {
+      waitlist.scrollIntoView({ block: 'start' });   // smooth via css
       afterScroll(function () {
+        // Fold the story away above, then put the waitlist back where it was on screen (some
+        // browsers do that themselves; this measures, so it never shifts twice).
+        var before = waitlist.getBoundingClientRect().top;
         page.classList.add('story-quiet');
         setStory(false);
-        dive.focus({ preventScroll: true });
+        window.scrollBy({ top: waitlist.getBoundingClientRect().top - before, behavior: 'instant' });
+        var heading = document.getElementById('waitlist-title');
+        if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
         setTimeout(function () { page.classList.remove('story-quiet'); }, 1000);
       });
     });
