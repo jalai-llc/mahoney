@@ -231,8 +231,8 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 /* shoreline: the sand, washing up over About in the hero's tones-of-one-colour way */
 .book > .wave-layers { bottom: calc(100% - 16px); height: 180px; color: var(--sand); }
 
-.clips, .about, .book { position: relative; }
-.clips::before, .clips::after, .about::before, .about::after {
+.readers, .clips, .about, .book { position: relative; }
+.readers::before, .readers::after, .clips::before, .clips::after, .about::before, .about::after {
   --wh: var(--wave-h);
   content: ""; position: absolute; left: 0; right: 0; bottom: calc(100% - var(--sink, 12px));
   height: calc(var(--wh) + var(--sink, 12px)); pointer-events: none; transform-origin: 50% 100%;
@@ -242,8 +242,10 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
                 linear-gradient(#000 0 0) left bottom / 100% calc(var(--sink, 12px) + 1px) no-repeat; }
 
 /* light sections: the line and the wave share every setting, so they move as one */
-.clips, .about { --wave-h: clamp(18px, 3vw, 34px); --sink: 12px; --bob-a: 4px; --swell-lo: .78; --swell-hi: 1.22; }
-.clips::before, .about::before { background: var(--rule); bottom: calc(100% - var(--sink) + 1px); }
+.readers, .clips, .about { --wave-h: clamp(18px, 3vw, 34px); --sink: 12px; --bob-a: 4px; --swell-lo: .78; --swell-hi: 1.22; }
+.readers::before, .clips::before, .about::before { background: var(--rule); bottom: calc(100% - var(--sink) + 1px); }
+.readers { --wave: var(--wave-c); --drift: 26s; --bob: 5.2s; --swell: 8s; }
+.readers::after { background: var(--sea-light); }
 .about::after { background: var(--white); }
 .clips { --wave: var(--wave-b); --drift: 22s; --dir: reverse; --bob: 4.8s; --swell: 7.5s; }
 .clips::after { background: var(--bg); }
@@ -255,8 +257,8 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
    for reduced motion, get the same waves standing still. */
 @media (prefers-reduced-motion: no-preference) {
   @supports (overflow: clip) {
-    .clips, .about { overflow-x: clip; }
-    .clips::before, .clips::after, .about::before, .about::after {
+    .readers, .clips, .about { overflow-x: clip; }
+    .readers::before, .readers::after, .clips::before, .clips::after, .about::before, .about::after {
       right: auto; width: 200%;
       -webkit-mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
               mask-size: 50% var(--wh), 100% calc(var(--sink, 12px) + 1px);
@@ -291,6 +293,26 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .name-field::placeholder { color: var(--muted); }
 .name-field:focus { border-color: var(--accent); }
 .signup-msg { min-height: 1.4em; margin: 12px 0 0; font-family: var(--font-ui); font-size: 14px; color: var(--muted); }
+
+/* ---------- Early readers (testimonials, light blue like the story) ----------
+   One quote sits centered; more stack under it, each with its own quote mark. */
+.readers { background: var(--sea-light); padding: 88px 0 104px; }
+.readers-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; text-align: center; }
+.readers .eyebrow { font-weight: 500; letter-spacing: .28em; line-height: 1.65; margin-bottom: 36px; }
+.reader-quote { margin: 0; }
+.reader-quote + .reader-quote { margin-top: 64px; }
+.reader-mark { display: block; width: 34px; height: auto; margin: 0 auto 22px; color: var(--accent); opacity: .55; }
+.reader-quote blockquote { margin: 0; }
+.reader-quote blockquote p { font-size: clamp(18px, 2vw, 20px); line-height: 1.75; text-wrap: pretty; }
+.reader-quote .reader-pull { font-family: var(--font-display); font-style: italic; font-weight: 500;
+  font-size: clamp(28px, 4vw, 42px); line-height: 1.2; letter-spacing: -.02em; margin-bottom: .7em; text-wrap: balance; }
+.reader-quote figcaption { margin-top: 28px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted); }
+.reader-quote figcaption::before { content: ""; display: block; width: 36px; height: 1px; margin: 0 auto 16px; background: var(--accent); opacity: .5; }
+.reader-name { font-weight: 600; color: var(--ink); }
+.reader-quote.quip { margin-top: 72px; }
+.reader-quote.quip .reader-pull { font-size: clamp(22px, 2.8vw, 30px); margin-bottom: 0; }
+.reader-quote.quip figcaption { margin-top: 20px; }
 
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
 .clips { background: var(--bg); }
