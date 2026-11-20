@@ -325,7 +325,9 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .reader-carousel.is-live .reader-quote.is-leaving { transform: translateX(-48px); }
 .reader-carousel.is-live .reader-quote.is-active { opacity: 1; visibility: visible; transform: none;
   transition: opacity .7s ease .25s, transform 1s var(--ease) .25s, visibility 0s; }
-.reader-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 44px; font-family: var(--font-ui); }
+/* the dots (the timer), and under them ‹ pause/play › */
+.reader-controls { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 44px; }
+.reader-dots, .reader-buttons { display: flex; align-items: center; justify-content: center; gap: 10px; }
 .reader-dot { position: relative; width: 10px; height: 10px; padding: 0; border: 0; border-radius: 999px; cursor: pointer; overflow: hidden;
   background: rgba(14, 31, 59, .18); transition: width .4s var(--ease), background .2s; }
 .reader-dot::before { content: ""; position: absolute; inset: -12px -4px; }   /* a bigger target for fingers */
@@ -335,10 +337,11 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .reader-dot[aria-current="true"] .reader-dot-fill { animation: reader-fill var(--read, 8s) linear forwards; }
 .reader-carousel:is(.is-held, .is-away, .is-paused) .reader-dot-fill { animation-play-state: paused; }
 @keyframes reader-fill { to { transform: scaleX(1); } }
-.reader-pause { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-left: 6px;
+.reader-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
   padding: 0; border: 1px solid rgba(14, 31, 59, .18); border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer;
-  transition: color .2s, border-color .2s; }
-.reader-pause:hover { color: var(--ink); border-color: rgba(14, 31, 59, .4); }
+  transition: color .2s, border-color .2s, background .2s; }
+.reader-btn:hover { color: var(--ink); border-color: rgba(14, 31, 59, .4); background: rgba(255, 255, 255, .5); }
+.reader-btn svg { width: 16px; height: 16px; }
 .reader-pause svg { width: 12px; height: 12px; }
 @media (prefers-reduced-motion: reduce) {
   .reader-carousel.is-live .reader-quote, .reader-carousel.is-live .reader-quote.is-active { transform: none; transition: opacity .3s ease, visibility 0s; }

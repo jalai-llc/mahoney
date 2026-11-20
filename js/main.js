@@ -251,6 +251,20 @@
     box.setAttribute('aria-label', 'Quotes from early readers');
     var controls = document.createElement('div');
     controls.className = 'reader-controls';
+    var dotRow = document.createElement('div');
+    dotRow.className = 'reader-dots';
+    var btnRow = document.createElement('div');
+    btnRow.className = 'reader-buttons';
+    function button(cls, label, icon, onClick) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'reader-btn ' + cls;
+      if (label) b.setAttribute('aria-label', label);
+      if (icon) b.innerHTML = icon;
+      b.addEventListener('click', onClick);
+      btnRow.appendChild(b);
+      return b;
+    }
     var dots = slides.map(function (slide, i) {
       slide.setAttribute('role', 'group');
       slide.setAttribute('aria-roledescription', 'slide');
@@ -264,14 +278,17 @@
       dot.innerHTML = '<span class="reader-dot-fill"></span>';
       dot.firstChild.addEventListener('animationend', function () { show(i + 1); });
       dot.addEventListener('click', function () { show(i); });
-      controls.appendChild(dot);
+      dotRow.appendChild(dot);
       return dot;
     });
-    var pause = document.createElement('button');
-    pause.type = 'button';
-    pause.className = 'reader-pause';
-    pause.addEventListener('click', function () { setPaused(!box.classList.contains('is-paused')); });
-    controls.appendChild(pause);
+    // ‹ pause/play ›
+    button('reader-prev', 'Previous quote', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      function () { show(current - 1); });
+    var pause = button('reader-pause', '', '', function () { setPaused(!box.classList.contains('is-paused')); });
+    button('reader-next', 'Next quote', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+      function () { show(current + 1); });
+    controls.appendChild(dotRow);
+    controls.appendChild(btnRow);
     box.appendChild(controls);
 
     function setPaused(on) {
