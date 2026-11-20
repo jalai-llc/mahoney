@@ -141,15 +141,15 @@
   </section>
 
   <!-- =================== EARLY READERS (testimonials) ===================
-       To add one: copy a <figure class="reader-quote"> block, change the words and the name.
+       To add one: copy a <figure class="reader-quote"> block, change the words and the name (and the
+       optional .reader-role line under it).
        The first line (.reader-pull) is the big italic line; leave it out if a quote doesn't have one.
        No spoilers: the questions the book raises, never its answers (research/content-rules.md). -->
   <section class="section readers" id="readers" aria-labelledby="readers-title">
-    <div class="readers-inner">
-      <h2 class="eyebrow" id="readers-title">From early readers</h2>
-      <!-- a carousel that moves on its own (js/main.js adds the dots and the pause button);
-           without JS the quotes simply stack -->
-      <div class="reader-carousel" data-reader-carousel>
+    <h2 class="eyebrow" id="readers-title">From early readers</h2>
+    <!-- a ribbon of quote cards (js/main.js): still and centered while they all fit on screen, a slow
+         endless loop once there are more than fit. Without JS they sit in a row you can scroll. -->
+    <div class="reader-ribbon" data-reader-ribbon>
       <div class="reader-track">
       <figure class="reader-quote">
         <svg class="reader-mark" viewBox="0 0 48 36" aria-hidden="true"><path d="M0,36 V20 C0,9 6,2 17,0 L19,5 C12,7 9,11 9,16 H18 V36 Z M28,36 V20 C28,9 34,2 45,0 L47,5 C40,7 37,11 37,16 H46 V36 Z" fill="currentColor"/></svg>
@@ -168,9 +168,8 @@
         <blockquote>
           <p class="reader-pull">It&rsquo;s so good that I couldn&rsquo;t find time to pick it up and read it.</p>
         </blockquote>
-        <figcaption><span class="reader-name">Sarah M.</span>, Terry&rsquo;s wife and worst critic</figcaption>
+        <figcaption><span class="reader-name">Sarah M.</span> <span class="reader-role">Terry&rsquo;s wife and worst critic</span></figcaption>
       </figure>
-      </div>
       </div>
     </div>
   </section>

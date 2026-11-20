@@ -295,58 +295,46 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .signup-msg { min-height: 1.4em; margin: 12px 0 0; font-family: var(--font-ui); font-size: 14px; color: var(--muted); }
 
 /* ---------- Early readers (testimonials, light blue like the story) ----------
-   One quote sits centered; more stack under it, each with its own quote mark. */
-.readers { background: var(--sea-light); padding: 88px 0 104px; }
-.readers-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; text-align: center; }
-.readers .eyebrow { font-weight: 500; letter-spacing: .28em; line-height: 1.65; margin-bottom: 36px; }
-.reader-quote { margin: 0; }
-.reader-quote + .reader-quote { margin-top: 64px; }
-.reader-mark { display: block; width: 34px; height: auto; margin: 0 auto 22px; color: var(--accent); opacity: .55; }
+   A ribbon of quote cards. While they all fit on screen they sit still, centered. Once there are
+   more than fit, js/main.js adds .is-moving: the set is copied as many times as it takes to fill
+   the screen (copies are hidden from screen readers) and the row drifts left in an endless loop.
+   It holds still under the mouse or a finger, while it's off screen, and once Pause is pressed;
+   drag or swipe moves it by hand, and the arrows move it one card. Visitors who ask for reduced
+   motion start paused. Without JS the cards sit in a row you can scroll sideways. */
+.readers { background: var(--sea-light); padding: 88px 0 72px; }
+.readers .eyebrow { text-align: center; font-weight: 500; letter-spacing: .28em; line-height: 1.65; margin: 0 0 36px; padding: 0 24px; }
+.reader-ribbon { overflow-x: auto; scrollbar-width: none; }
+.reader-ribbon::-webkit-scrollbar { display: none; }
+.reader-track { display: flex; gap: 24px; width: max-content; margin: 0 auto; padding: 6px 24px 52px; }   /* room for the shadows */
+.reader-ribbon.is-moving { overflow: hidden; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+.reader-ribbon.is-dragging { cursor: grabbing; }
+.reader-ribbon.is-moving .reader-track { margin: 0; padding-left: 0; padding-right: 0; will-change: transform; }
+.reader-quote { flex: 0 0 auto; width: min(440px, 80vw); margin: 0; padding: clamp(24px, 3vw, 34px);
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--white); border-radius: 16px; box-shadow: 0 22px 44px -30px rgba(14, 31, 59, .45); }
+.reader-quote.quip { width: min(360px, 72vw); }
+.reader-mark { display: block; width: 28px; height: auto; margin: 0 0 18px; color: var(--accent); opacity: .55; }
 .reader-quote blockquote { margin: 0; }
-.reader-quote blockquote p { font-size: clamp(18px, 2vw, 20px); line-height: 1.75; text-wrap: pretty; }
+.reader-quote blockquote p { font-size: 17px; line-height: 1.7; margin: 0; text-wrap: pretty; }
+/* the big italic line: the same size on every card */
 .reader-quote .reader-pull { font-family: var(--font-display); font-style: italic; font-weight: 500;
-  font-size: clamp(28px, 4vw, 42px); line-height: 1.2; letter-spacing: -.02em; margin-bottom: .7em; text-wrap: balance; }
-.reader-quote figcaption { margin-top: 28px; font-family: var(--font-ui); font-size: 13px; letter-spacing: .12em;
+  font-size: clamp(22px, 2.4vw, 26px); line-height: 1.25; letter-spacing: -.015em; margin: 0 0 .7em; text-wrap: balance; }
+.reader-quote.quip .reader-pull { margin-bottom: 0; }   /* nothing under it */
+.reader-quote figcaption { margin-top: 24px; font-family: var(--font-ui); font-size: 12px; letter-spacing: .12em;
   text-transform: uppercase; color: var(--muted); text-wrap: balance; }
-.reader-quote figcaption::before { content: ""; display: block; width: 36px; height: 1px; margin: 0 auto 16px; background: var(--accent); opacity: .5; }
-.reader-name { font-weight: 600; color: var(--ink); }
-.reader-quote.quip .reader-pull { margin-bottom: 0; }   /* same size as the others; nothing under it */
-
-/* The carousel (js/main.js sets it up and adds .is-live): every quote sits in the same grid cell,
-   so the box is as tall as the longest one and the page never jumps. The current quote
-   (.is-active) glides in from the right; the one before it (.is-leaving) glides out to the left.
-   Each dot is a pill that fills while its quote is up; when the fill finishes, the next quote
-   comes in. The fill's length is set per quote (--read), so longer quotes stay up longer. It
-   holds still while the pointer or keyboard focus is on it, while it's off screen, and once
-   "Pause" is pressed. Visitors who ask for reduced motion start paused. */
-.reader-carousel.is-live .reader-track { display: grid; align-items: center; touch-action: pan-y; }
-.reader-carousel.is-live .reader-quote { grid-area: 1 / 1; margin: 0; opacity: 0; visibility: hidden; transform: translateX(48px);
-  transition: opacity .6s ease, transform .9s var(--ease), visibility 0s .9s; }
-.reader-carousel.is-live .reader-quote.is-leaving { transform: translateX(-48px); }
-.reader-carousel.is-live .reader-quote.is-active { opacity: 1; visibility: visible; transform: none;
-  transition: opacity .7s ease .25s, transform 1s var(--ease) .25s, visibility 0s; }
-/* the dots (the timer), and under them ‹ pause/play › */
-.reader-controls { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 44px; }
-.reader-dots, .reader-buttons { display: flex; align-items: center; justify-content: center; gap: 10px; }
-.reader-dot { position: relative; width: 10px; height: 10px; padding: 0; border: 0; border-radius: 999px; cursor: pointer; overflow: hidden;
-  background: rgba(14, 31, 59, .18); transition: width .4s var(--ease), background .2s; }
-.reader-dot::before { content: ""; position: absolute; inset: -12px -4px; }   /* a bigger target for fingers */
-.reader-dot:hover { background: rgba(14, 31, 59, .32); }
-.reader-dot[aria-current="true"] { width: 40px; }
-.reader-dot-fill { position: absolute; inset: 0; border-radius: inherit; background: var(--accent); transform-origin: left center; transform: scaleX(0); }
-.reader-dot[aria-current="true"] .reader-dot-fill { animation: reader-fill var(--read, 8s) linear forwards; }
-.reader-carousel:is(.is-held, .is-away, .is-paused) .reader-dot-fill { animation-play-state: paused; }
-@keyframes reader-fill { to { transform: scaleX(1); } }
+.reader-quote figcaption::before { content: ""; display: block; width: 32px; height: 1px; margin: 0 0 14px; background: var(--accent); opacity: .5; }
+.reader-name { display: block; font-weight: 600; color: var(--ink); }
+.reader-role { display: block; margin-top: 4px; }
+/* ‹ pause/play ›, shown only while the ribbon moves */
+.reader-buttons { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: -8px; }
 .reader-btn { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px;
   padding: 0; border: 1px solid rgba(14, 31, 59, .18); border-radius: 50%; background: transparent; color: var(--muted); cursor: pointer;
   transition: color .2s, border-color .2s, background .2s; }
 .reader-btn:hover { color: var(--ink); border-color: rgba(14, 31, 59, .4); background: rgba(255, 255, 255, .5); }
 .reader-btn svg { width: 16px; height: 16px; }
 .reader-pause svg { width: 12px; height: 12px; }
-@media (prefers-reduced-motion: reduce) {
-  .reader-carousel.is-live .reader-quote, .reader-carousel.is-live .reader-quote.is-active { transform: none; transition: opacity .3s ease, visibility 0s; }
-  .reader-dot { transition: none; }
-}
 
 /* ---------- Clips (vertical 9:16, captions burned in; played from YouTube) ---------- */
 .clips { background: var(--bg); }

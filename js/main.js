@@ -235,26 +235,26 @@
     update();
   });
 
-  // ---- "From early readers": a carousel that moves on its own (css "The carousel").
-  // Each dot's fill is the timer: when it finishes, the next quote comes in. Longer quotes get
-  // longer fills. Swipe sideways on phones. Without JS the quotes simply stack.
-  document.querySelectorAll('[data-reader-carousel]').forEach(function (box) {
-    var slides = [].slice.call(box.querySelectorAll('.reader-quote'));
+  // ---- "From early readers": a ribbon of quote cards (css "Early readers").
+  // Still and centered while every card fits on screen. Once they don't, the set is copied to
+  // fill the screen and the row drifts left in an endless loop; drag or swipe to move it by
+  // hand, the arrows move it one card. Without JS the cards sit in a row you can scroll.
+  document.querySelectorAll('[data-reader-ribbon]').forEach(function (box) {
     var track = box.querySelector('.reader-track');
-    if (slides.length < 2 || !track) return;
+    var cards = track ? [].slice.call(track.children) : [];
+    if (!cards.length) return;
     var PAUSE = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5H5v9H2.5zM7 1.5h2.5v9H7z" fill="currentColor"/></svg>';
     var PLAY = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.5 10.5 6l-7.3 4.5z" fill="currentColor"/></svg>';
-    var current = -1;
+    var LEFT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var RIGHT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var moving = false, paused = false, held = false, away = false, running = false, placed = false;
+    var pos = 0, setW = 1, speed = 24, last = 0, glide = null, drag = null;
 
-    box.setAttribute('role', 'region');
-    box.setAttribute('aria-roledescription', 'carousel');
-    box.setAttribute('aria-label', 'Quotes from early readers');
-    var controls = document.createElement('div');
-    controls.className = 'reader-controls';
-    var dotRow = document.createElement('div');
-    dotRow.className = 'reader-dots';
+    // ‹ pause/play ›, under the ribbon (outside it, so its faded edges don't touch them)
     var btnRow = document.createElement('div');
     btnRow.className = 'reader-buttons';
+    btnRow.hidden = true;
     function button(cls, label, icon, onClick) {
       var b = document.createElement('button');
       b.type = 'button';
@@ -265,82 +265,109 @@
       btnRow.appendChild(b);
       return b;
     }
-    var dots = slides.map(function (slide, i) {
-      slide.setAttribute('role', 'group');
-      slide.setAttribute('aria-roledescription', 'slide');
-      slide.setAttribute('aria-label', (i + 1) + ' of ' + slides.length);
-      var words = slide.textContent.trim().split(/\s+/).length;
-      var dot = document.createElement('button');
-      dot.type = 'button';
-      dot.className = 'reader-dot';
-      dot.setAttribute('aria-label', 'Show quote ' + (i + 1));
-      dot.style.setProperty('--read', Math.min(20000, Math.max(6000, 2500 + words * 230)) + 'ms');
-      dot.innerHTML = '<span class="reader-dot-fill"></span>';
-      dot.firstChild.addEventListener('animationend', function () { show(i + 1); });
-      dot.addEventListener('click', function () { show(i); });
-      dotRow.appendChild(dot);
-      return dot;
-    });
-    // ‹ pause/play ›
-    button('reader-prev', 'Previous quote', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      function () { show(current - 1); });
-    var pause = button('reader-pause', '', '', function () { setPaused(!box.classList.contains('is-paused')); });
-    button('reader-next', 'Next quote', '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      function () { show(current + 1); });
-    controls.appendChild(dotRow);
-    controls.appendChild(btnRow);
-    box.appendChild(controls);
+    button('reader-prev', 'Back one quote', LEFT, function () { nudge(1); });
+    var pause = button('reader-pause', '', '', function () { setPaused(!paused); });
+    button('reader-next', 'On to the next quote', RIGHT, function () { nudge(-1); });
+    box.parentNode.insertBefore(btnRow, box.nextSibling);
 
     function setPaused(on) {
-      box.classList.toggle('is-paused', on);
+      paused = on;
       pause.innerHTML = on ? PLAY : PAUSE;
       pause.setAttribute('aria-label', on ? 'Play the quotes' : 'Pause the quotes');
-      track.setAttribute('aria-live', on ? 'polite' : 'off');   // announce changes only when they're asked for
     }
-    function show(n) {
-      n = (n + slides.length) % slides.length;
-      if (n === current) return;
-      var next = slides[n];
-      // start it from the right every time (with two quotes, it may have just left to the left)
-      next.classList.remove('is-leaving');
-      next.style.transition = 'none';
-      void next.offsetWidth;
-      if (current >= 0) next.style.transition = '';
-      slides.forEach(function (s, i) {
-        s.classList.toggle('is-leaving', i === current);
-        s.classList.toggle('is-active', i === n);
-      });
-      dots.forEach(function (d, i) {
-        if (i === n) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
-      });
-      if (current < 0) { void next.offsetWidth; next.style.transition = ''; }   // the first one just appears
-      current = n;
+    function wrap(p) { return ((p % setW) - setW) % setW; }   // always one set's width or less to the left
+    function render() { track.style.transform = 'translate3d(' + wrap(pos).toFixed(2) + 'px,0,0)'; }
+    function nudge(dir) {
+      var step = setW / cards.length;
+      var to = (glide ? glide.to : pos) + dir * step;
+      if (reduce) { pos = to; glide = null; render(); return; }
+      glide = { from: pos, to: to, t0: performance.now(), ms: 650 };
     }
 
-    // hold still while a mouse is over it or the keyboard is in it, and while it's off screen
-    box.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') box.classList.add('is-held'); });
-    box.addEventListener('pointerleave', function () { box.classList.remove('is-held'); });
-    box.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) box.classList.add('is-held'); });
-    box.addEventListener('focusout', function (e) { if (!box.contains(e.relatedTarget)) box.classList.remove('is-held'); });
-    if ('IntersectionObserver' in window) {
-      box.classList.add('is-away');
-      new IntersectionObserver(function (entries) {
-        box.classList.toggle('is-away', !entries[0].isIntersecting);
-      }, { threshold: 0.35 }).observe(box);
+    // Lay it out: measure the cards side by side; if they fit, stay still, otherwise fill and move.
+    function layout() {
+      track.querySelectorAll('[data-copy]').forEach(function (c) { c.remove(); });
+      box.classList.remove('is-moving');
+      track.style.transform = '';
+      var gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+      setW = cards.reduce(function (w, c) { return w + c.getBoundingClientRect().width + gap; }, 0) || 1;
+      moving = track.offsetWidth > box.clientWidth + 1;
+      btnRow.hidden = !moving;
+      if (!moving) { running = false; return; }
+      box.classList.add('is-moving');
+      var copies = Math.ceil(box.clientWidth / setW) + 1;
+      for (var n = 0; n < copies; n++) {
+        cards.forEach(function (c) {
+          var copy = c.cloneNode(true);
+          copy.setAttribute('data-copy', '');
+          copy.setAttribute('aria-hidden', 'true');
+          copy.inert = true;
+          track.appendChild(copy);
+        });
+      }
+      speed = Math.max(14, Math.min(26, box.clientWidth / 50));   // px a second: slower on phones
+      if (!placed) { pos = Math.round(box.clientWidth * 0.06) + 8; placed = true; }   // first card clear of the fade
+      render();
+      start();
     }
-    // swipe sideways on touch screens
-    var startX = null;
-    track.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') startX = e.clientX; });
-    track.addEventListener('pointercancel', function () { startX = null; });
-    track.addEventListener('pointerup', function (e) {
-      if (startX === null) return;
-      var dx = e.clientX - startX;
-      startX = null;
-      if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    function frame(t) {
+      if (!running) return;
+      var dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
+      last = t;
+      if (glide) {
+        var k = Math.min(1, (t - glide.t0) / glide.ms);
+        pos = glide.from + (glide.to - glide.from) * (1 - Math.pow(1 - k, 3));
+        if (k >= 1) glide = null;
+      } else if (!drag && !held && !paused) {
+        pos -= speed * dt;
+      }
+      render();
+      requestAnimationFrame(frame);
+    }
+    function start() {
+      if (running || !moving || away) return;
+      running = true;
+      last = 0;
+      requestAnimationFrame(frame);
+    }
+
+    // hold still under the mouse; drag or swipe to move it by hand (a finger resting on it holds it too)
+    box.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') held = true; });
+    box.addEventListener('pointerleave', function () { held = false; });
+    box.addEventListener('pointerdown', function (e) {
+      if (!moving || e.button > 0) return;
+      drag = { x: e.clientX, pos: pos, id: e.pointerId, on: false };
+      glide = null;
+    });
+    box.addEventListener('pointermove', function (e) {
+      if (!drag || e.pointerId !== drag.id) return;
+      var dx = e.clientX - drag.x;
+      if (!drag.on && Math.abs(dx) > 4) {
+        drag.on = true;
+        box.classList.add('is-dragging');
+        try { box.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      if (drag.on) pos = drag.pos + dx;
+    });
+    function endDrag() { drag = null; box.classList.remove('is-dragging'); }
+    box.addEventListener('pointerup', endDrag);
+    box.addEventListener('pointercancel', endDrag);
+
+    // only run while it's on screen
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        away = !entries[0].isIntersecting;
+        if (away) running = false; else start();
+      }).observe(box);
+    }
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(layout, 150);
     });
 
-    box.classList.add('is-live');
-    setPaused(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-    show(0);
+    setPaused(reduce);
+    layout();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(layout);   // card widths settle once the fonts load
   });
 })();
