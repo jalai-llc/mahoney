@@ -234,4 +234,96 @@
     window.addEventListener('resize', update);
     update();
   });
+
+  // ---- "From early readers": a carousel that moves on its own (css "The carousel").
+  // Each dot's fill is the timer: when it finishes, the next quote comes in. Longer quotes get
+  // longer fills. Swipe sideways on phones. Without JS the quotes simply stack.
+  document.querySelectorAll('[data-reader-carousel]').forEach(function (box) {
+    var slides = [].slice.call(box.querySelectorAll('.reader-quote'));
+    var track = box.querySelector('.reader-track');
+    if (slides.length < 2 || !track) return;
+    var PAUSE = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.5H5v9H2.5zM7 1.5h2.5v9H7z" fill="currentColor"/></svg>';
+    var PLAY = '<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M3.2 1.5 10.5 6l-7.3 4.5z" fill="currentColor"/></svg>';
+    var current = -1;
+
+    box.setAttribute('role', 'region');
+    box.setAttribute('aria-roledescription', 'carousel');
+    box.setAttribute('aria-label', 'Quotes from early readers');
+    var controls = document.createElement('div');
+    controls.className = 'reader-controls';
+    var dots = slides.map(function (slide, i) {
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', (i + 1) + ' of ' + slides.length);
+      var words = slide.textContent.trim().split(/\s+/).length;
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'reader-dot';
+      dot.setAttribute('aria-label', 'Show quote ' + (i + 1));
+      dot.style.setProperty('--read', Math.min(20000, Math.max(6000, 2500 + words * 230)) + 'ms');
+      dot.innerHTML = '<span class="reader-dot-fill"></span>';
+      dot.firstChild.addEventListener('animationend', function () { show(i + 1); });
+      dot.addEventListener('click', function () { show(i); });
+      controls.appendChild(dot);
+      return dot;
+    });
+    var pause = document.createElement('button');
+    pause.type = 'button';
+    pause.className = 'reader-pause';
+    pause.addEventListener('click', function () { setPaused(!box.classList.contains('is-paused')); });
+    controls.appendChild(pause);
+    box.appendChild(controls);
+
+    function setPaused(on) {
+      box.classList.toggle('is-paused', on);
+      pause.innerHTML = on ? PLAY : PAUSE;
+      pause.setAttribute('aria-label', on ? 'Play the quotes' : 'Pause the quotes');
+      track.setAttribute('aria-live', on ? 'polite' : 'off');   // announce changes only when they're asked for
+    }
+    function show(n) {
+      n = (n + slides.length) % slides.length;
+      if (n === current) return;
+      var next = slides[n];
+      // start it from the right every time (with two quotes, it may have just left to the left)
+      next.classList.remove('is-leaving');
+      next.style.transition = 'none';
+      void next.offsetWidth;
+      if (current >= 0) next.style.transition = '';
+      slides.forEach(function (s, i) {
+        s.classList.toggle('is-leaving', i === current);
+        s.classList.toggle('is-active', i === n);
+      });
+      dots.forEach(function (d, i) {
+        if (i === n) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current');
+      });
+      if (current < 0) { void next.offsetWidth; next.style.transition = ''; }   // the first one just appears
+      current = n;
+    }
+
+    // hold still while a mouse is over it or the keyboard is in it, and while it's off screen
+    box.addEventListener('pointerenter', function (e) { if (e.pointerType === 'mouse') box.classList.add('is-held'); });
+    box.addEventListener('pointerleave', function () { box.classList.remove('is-held'); });
+    box.addEventListener('focusin', function (e) { if (e.target.matches(':focus-visible')) box.classList.add('is-held'); });
+    box.addEventListener('focusout', function (e) { if (!box.contains(e.relatedTarget)) box.classList.remove('is-held'); });
+    if ('IntersectionObserver' in window) {
+      box.classList.add('is-away');
+      new IntersectionObserver(function (entries) {
+        box.classList.toggle('is-away', !entries[0].isIntersecting);
+      }, { threshold: 0.35 }).observe(box);
+    }
+    // swipe sideways on touch screens
+    var startX = null;
+    track.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse') startX = e.clientX; });
+    track.addEventListener('pointercancel', function () { startX = null; });
+    track.addEventListener('pointerup', function (e) {
+      if (startX === null) return;
+      var dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+    });
+
+    box.classList.add('is-live');
+    setPaused(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    show(0);
+  });
 })();
