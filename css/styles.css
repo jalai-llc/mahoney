@@ -312,9 +312,8 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .reader-ribbon.is-dragging { cursor: grabbing; }
 .reader-ribbon.is-moving .reader-track { margin: 0; padding-left: 0; padding-right: 0; will-change: transform; }
 .reader-quote { flex: 0 0 auto; width: min(440px, 80vw); margin: 0; padding: clamp(24px, 3vw, 34px);
-  display: flex; flex-direction: column; justify-content: center;
+  display: flex; flex-direction: column;   /* quotes start at the top; the names line up along the bottom */
   background: var(--white); border-radius: 16px; box-shadow: 0 22px 44px -30px rgba(14, 31, 59, .45); }
-.reader-quote.quip { width: min(360px, 72vw); }
 .reader-mark { display: block; width: 28px; height: auto; margin: 0 0 18px; color: var(--accent); opacity: .55; }
 .reader-quote blockquote { margin: 0; }
 .reader-quote blockquote p { font-size: 17px; line-height: 1.7; margin: 0; text-wrap: pretty; }
@@ -322,8 +321,10 @@ html:not(.js) .rise-wrap { display: none; }   /* without JS the story can't clos
 .reader-quote .reader-pull { font-family: var(--font-display); font-style: italic; font-weight: 500;
   font-size: clamp(22px, 2.4vw, 26px); line-height: 1.25; letter-spacing: -.015em; margin: 0 0 .7em; text-wrap: balance; }
 .reader-quote.quip .reader-pull { margin-bottom: 0; }   /* nothing under it */
-.reader-quote figcaption { margin-top: 24px; font-family: var(--font-ui); font-size: 12px; letter-spacing: .12em;
+.reader-quote figcaption { margin-top: auto; padding-top: 24px; font-family: var(--font-ui); font-size: 12px; letter-spacing: .12em;
   text-transform: uppercase; color: var(--muted); text-wrap: balance; }
+/* every credit keeps room for a second line (.reader-role), so the names sit level on every card */
+.reader-quote figcaption { min-height: calc(24px + 15px + 4px + 3.3em); }
 .reader-quote figcaption::before { content: ""; display: block; width: 32px; height: 1px; margin: 0 0 14px; background: var(--accent); opacity: .5; }
 .reader-name { display: block; font-weight: 600; color: var(--ink); }
 .reader-role { display: block; margin-top: 4px; }
